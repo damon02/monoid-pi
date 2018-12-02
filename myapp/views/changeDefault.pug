@@ -1,0 +1,25 @@
+extends layout
+
+block content
+  .main.container
+    .row
+      .col-md-6.col-md-offset-3
+        h1.display-4.m-b-2 Change default credentials
+        form(method='POST' action='/changedefault')
+          div.form-group
+            label(for='username') New Username
+            input.form-control(type='text' id='username_new' placeholder='username' name='username_new' required autocomplete="off")
+          div.form-group
+            label(for='password') New password
+            input.form-control(type='password' id='password_new' placeholder='New password' name='password_new' required autocomplete="off")
+            small(class="form-text text-muted") The password must be at least 10 characters long.
+            small(class="form-text text-muted") The password must contain at least one uppercase letter.
+            small(class="form-text text-muted") The password must contain at least one number.
+            small(class="form-text text-muted") The password must contain at least one special character.
+
+
+          div.form-group
+            label(for='password') Verify new password
+            input.form-control(type='password' id='password_new_verify' placeholder='Verify new password' name='password_new_verify' required autocomplete="off")
+          button.btn.btn-primary(type='submit') Submit
+
