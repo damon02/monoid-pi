@@ -6,4 +6,4 @@ FILTER_STRING="host not $IP_ADDR"
 
 echo $FILTER_STRING
 
-tshark -i eth0  -c 100 -w outputFile
+tshark -i eth0 -c 100 -w outputFile -j "eth eth.src frame ip"
