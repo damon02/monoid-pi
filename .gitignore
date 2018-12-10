@@ -4,3 +4,6 @@ npm-debug.log
 .env
 .DS_Store
 .vscode
+
+tap/outputFiles
+tap/tmp.json
