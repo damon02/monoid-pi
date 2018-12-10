@@ -1,0 +1,94 @@
+{"body" : [
+  {
+    "_index": "packets-2018-12-04",
+    "_type": "pcap_file",
+    "_score": null,
+    "_source": {
+      "layers": {
+        "frame": {
+          "frame.interface_id": "0",
+          "frame.interface_id_tree": {
+            "frame.interface_name": "eth0"
+          },
+          "frame.encap_type": "1",
+          "frame.time": "Dec  4, 2018 14:58:09.136143494 GMT",
+          "frame.offset_shift": "0.000000000",
+          "frame.time_epoch": "1543935489.136143494",
+          "frame.time_delta": "0.000000000",
+          "frame.time_delta_displayed": "0.000000000",
+          "frame.time_relative": "0.000000000",
+          "frame.number": "1",
+          "frame.len": "60",
+          "frame.cap_len": "60",
+          "frame.marked": "0",
+          "frame.ignored": "0",
+          "frame.protocols": "eth:llc:stp"
+        },
+        "eth": {
+          "eth.dst": "01:80:c2:00:00:00",
+          "eth.dst_tree": {
+            "eth.dst_resolved": "Spanning-tree-(for-bridges)_00",
+            "eth.addr": "01:80:c2:00:00:00",
+            "eth.addr_resolved": "Spanning-tree-(for-bridges)_00",
+            "eth.lg": "0",
+            "eth.ig": "1"
+          },
+          "eth.src": "0c:9d:92:b1:45:74",
+          "eth.src_tree": {
+            "eth.src_resolved": "AsustekC_b1:45:74",
+            "eth.addr": "0c:9d:92:b1:45:74",
+            "eth.addr_resolved": "AsustekC_b1:45:74",
+            "eth.lg": "0",
+            "eth.ig": "0"
+          },
+          "eth.len": "38",
+          "eth.padding": "00:00:00:00:00:00:00:00"
+        },
+        "llc": {
+          "llc.dsap": "0x00000042",
+          "llc.dsap_tree": {
+            "llc.dsap.sap": "33",
+            "llc.dsap.ig": "0"
+          },
+          "llc.ssap": "0x00000042",
+          "llc.ssap_tree": {
+            "llc.ssap.sap": "33",
+            "llc.ssap.cr": "0"
+          },
+          "llc.control": "0x00000003",
+          "llc.control_tree": {
+            "llc.control.u_modifier_cmd": "0x00000000",
+            "llc.control.ftype": "0x00000003"
+          }
+        },
+        "stp": {
+          "stp.protocol": "0x00000000",
+          "stp.version": "0",
+          "stp.type": "0x00000000",
+          "stp.flags": "0x00000000",
+          "stp.flags_tree": {
+            "stp.flags.tcack": "0",
+            "stp.flags.tc": "0"
+          },
+          "Root Identifier: 32768 \/ 0 \/ 0c:9d:92:b1:45:74": {
+            "stp.root.prio": "32768",
+            "stp.root.ext": "0",
+            "stp.root.hw": "0c:9d:92:b1:45:74"
+          },
+          "stp.root.cost": "0",
+          "Bridge Identifier: 32768 \/ 0 \/ 0c:9d:92:b1:45:74": {
+            "stp.bridge.prio": "32768",
+            "stp.bridge.ext": "0",
+            "stp.bridge.hw": "0c:9d:92:b1:45:74"
+          },
+          "stp.port": "0x00008001",
+          "stp.msg_age": "0",
+          "stp.max_age": "20",
+          "stp.hello": "2",
+          "stp.forward": "0"
+        }
+      }
+    }
+  }
+
+]}
