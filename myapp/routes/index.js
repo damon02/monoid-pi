@@ -3,7 +3,7 @@ const router = express.Router();
 const mid = require('../middleware');
 const model = require('../models/user');
 var owasp = require('owasp-password-strength-test');
-
+const systemData = require('../modules/systemData')
 
 /* GET landing page. */
 router.get('/', function(req, res, next) {
@@ -15,8 +15,21 @@ router.get('/', function(req, res, next) {
 router.get('/dashboard', mid.requiresLogin, function(req, res, next) {
 
   let User = model.getUserObject()
+
+
+
+
   if (req.session.user && req.cookies.user_sid) {
-        return res.render('dashboard', { title: 'dashboard', name: User.username, token: User.auth_token });
+
+  systemData.getSystemData().then(systemData =>{
+      return res.render('dashboard', 
+      { title: 'Dashboard', 
+      username: User.username, 
+      token: User.api_token, 
+      system_data: systemData
+    });
+    })
+
   }else{
     var err = new Error('Page not found');
     err.status = 404;
@@ -94,12 +107,9 @@ router.post('/changedefault', (req, res,next) => {
               let itemsToUpdate = {"username": req.body.username_new, "password": req.body.password_new}
 
               return model.updateUser(itemsToUpdate).then(function(new_storage_object){
-                console.log('new storage:',new_storage_object)
                 model.writeToConfig(new_storage_object)
                 return res.redirect('/dashboard');
               })
-
-
             }else{
               return res.render('changedefault', { message: 'poor username'});
             }
@@ -115,6 +125,85 @@ router.post('/changedefault', (req, res,next) => {
           return next(err);
   }
 });
+
+router.get('/userData', (req, res,next) => {
+
+}) 
+
+router.post('/updateApiToken', (req, res,next) => {
+
+
+  console.log(req.body)
+  if(req.body.apiToken.length > 5 && req.body.apiToken.length  < 40){
+    let itemsToUpdate = {"api_token": req.body.apiToken}
+  return model.updateUser(itemsToUpdate).then(function(new_storage_object){
+    model.writeToConfig(new_storage_object)
+    return res.redirect('/dashboard');
+  })
+}else{
+  return res.render('dashboard', { message: 'Bad Token'});
+}
+})
+
+
+router.post('/updateUsername', (req, res,next) => {
+
+  if(req.body.username.length > 3 && req.body.username.length  < 30){
+    let itemsToUpdate = {"username": req.body.username}
+  return model.updateUser(itemsToUpdate).then(function(new_storage_object){
+    model.writeToConfig(new_storage_object)
+    return res.redirect('/dashboard');
+  })
+}else{
+  return res.render('/dashboard', { message: 'poor username'});
+}
+
+  
+}) 
+
+
+router.post('/updatePassword', (req, res,next) => {
+
+  if(req.body.password_new != req.body.password_new_verify){
+    return res.render('changedefault', { message: 'New password does not match!'});
+  }
+
+  let result = owasp.test(req.body.password_new);
+
+  if(result.errors.length > 1){
+    return res.render('changedefault', { message: 'Password too weak!'});
+  }else{
+    let itemsToUpdate = {"password": req.body.password_new}
+  return model.updateUser(itemsToUpdate).then(function(new_storage_object){
+    model.writeToConfig(new_storage_object)
+    return res.redirect('/dashboard');
+  })
+}
+
+  
+}) 
+
+router.post('/startTap', (req, res,next) => {
+
+}) 
+
+
+router.post('/stopTap', (req, res,next) => {
+
+}) 
+
+
+router.get('/testConnection', (req, res,next) => {
+
+  systemData.testConnection().then(response =>{
+
+    return response
+  }).catch( err =>{
+    return err
+  })
+
+}) 
+
 
 
 module.exports = router;

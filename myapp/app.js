@@ -4,7 +4,6 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const expressValidator = require('express-validator')
-const flash = require('connect-flash');
 const indexRouter = require('./routes/index');
 
 var session = require('express-session')
@@ -77,10 +76,6 @@ app.use((req, res, next) => {
   }
   next();
 });
-
-
-//flash werkt niet  (voor error msg)
-app.use(flash());
 
 
 // parse incoming requests

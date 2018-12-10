@@ -60,16 +60,21 @@ let updateUser = function(items_to_update){
 
     var storage = JSON.parse(fs.readFileSync('../myapp/storage/config.json', 'utf8'));
 
+
+    //SANITIZE INPUT!
+
     storage.user.hasChangedPassword = true
 
-
-    hash = hashpassword(items_to_update.password).then(function(hash){
-        storage.user.password = hash
-        storage.user.username = items_to_update.username
-        return resolve(storage)
-
-    })
-
+    for (let key in items_to_update){
+        if(key == "password"){
+            hash = hashpassword(items_to_update.password).then(function(hash){
+                storage.user[key] = hash        
+            })
+        }else{
+            storage.user[key] = items_to_update[key]
+        }
+    }
+    return resolve(storage)
     });
 }
 
@@ -85,8 +90,6 @@ let setLastLogin = function(){
     storage.user.last_logged_in = Date.now();
 
     fs.writeFileSync('../myapp/storage/config.json',JSON.stringify(storage,null,2),'utf8')
-
-
 }
 
 module.exports = {

@@ -2,4 +2,65 @@ extends layout
 
 block content
   h1= title
-  p Welcome to #{title}
+  container
+    .row
+      .col-2
+        h3 User settings
+        form(method='POST' action='/updateUsername')
+          div.form-group
+            input.form-control(type='text' id='username' placeholder='username' value=username name='username' required autocomplete="off")
+            button.btn.btn-primary(type='submit') update username
+        form(method='POST' action='/updateApiToken')
+          div.form-group
+            input.form-control(type='text' id='apiToken' placeholder='API token' value=token name='apiToken' required autocomplete="off")        
+            button.btn.btn-primary(type='submit') update api token
+        form(method='POST' action='/updatePassword')
+          div.form-group
+            input.form-control(type='password' id='password' placeholder='Current password' name='password' required autocomplete="off")
+          div.form-group
+            input.form-control(type='password' id='password_new' placeholder='New password' name='password_new' required autocomplete="off")
+            small(class="form-text text-muted") The password must be at least 10 characters long.
+            small(class="form-text text-muted") The password must contain at least one uppercase letter.
+            small(class="form-text text-muted") The password must contain at least one number.
+            small(class="form-text text-muted") The password must contain at least one special character.
+          div.form-group
+            input.form-control(type='password' id='password_new_verify' placeholder='Verify new password' name='password_new_verify' required autocomplete="off")
+
+            button.btn.btn-primary(type='submit') Change password
+
+      .col.meme
+        h3 System
+        .row-justify-content-center
+          .col.meme
+            .row-justify-content-center
+              form(method='POST' action='/testConnection')
+                button.btn.btn-info(type='submit') test connection
+            .row-justify-content-center
+              button.btn.btn-success start service
+            .row-justify-content-center
+              button.btn.btn-danger stop service
+
+        .row-justify-content-center
+          h4 File System
+          
+          ul
+            //li=  'total size: '+system_data.fs_size.total_size
+            //li=  'used: '+system_data.fs_size.used
+
+          h4 Memory System
+          ul
+
+          h4 CPU
+          ul
+            //li= 'current cpu (%) '+system_data.cpu_load.currentload
+
+          h4 Network
+          ul
+
+          h4 Interfaces
+          ul
+
+
+      .col.meme
+        h3 Column 3
+        p bla bla

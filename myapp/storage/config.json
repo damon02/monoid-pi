@@ -3,8 +3,16 @@
     "id": "4176a5fb-b889-43ee-bf36-4f455fbb4193",
     "username": "monoid",
     "password": "$2a$10$0JjL1xQjWaeM2dxx33Nuy.wtKSPzz7PqjoyQFLabQvOousn9Y5szy",
-    "auth_token": "",
-    "last_logged_in": 1543761104855,
+    "api_token": "abc123123",
+    "last_logged_in": 1544453908829,
     "hasChangedPassword": true
+  },
+  "system": {
+    "eth_in": "eth1",
+    "eth_out": "eth2",
+    "eth_mon": "eth0",
+    "api_url_dev": "8.8.8.8",
+    "api_url_test": "192.168.1.153",
+    "api_url_prod": ""
   }
 }

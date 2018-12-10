@@ -1,0 +1,161 @@
+//const si = require('systeminformation')
+const fs = require('fs');
+var shelljs = require('shelljs');
+
+let getSystemData = async function(){
+
+    let datetime = new Date();
+    var system = JSON.parse(fs.readFileSync('../myapp/storage/config.json', 'utf8')).system;
+
+
+    if(shelljs.which('w')){
+
+        ram_usage = shelljs.exec("free -m | awk '/Mem:/ { print $3 } '") /shelljs.exec("free -m | awk '/Mem:/ { print $2 } '")
+        return {
+            "datetime": datetime,
+            "system": system,
+            'ram_usage': ram_usage,
+            'filesys': shelljs.exec('df -h | grep /dev/root'),
+            'cpu_usage': shelljs.exec("top -n1 | awk '/Cpu\(s\):/ {print $4}'")
+        }
+    }else{
+        console.log('Windows')
+        return {
+            "datetime": datetime,
+            "system": system,
+            'ram': 'BAH WINDOWS',
+            'filesys': 'BAH WINDOWS',
+            'cpu': 'BAH WINDOWS',
+        }
+
+    }
+
+
+    return {
+        "datetime": datetime,
+        "system": system,
+        "cpu_load": await cpuLoad(),
+        //"cpu_temp": await cpuTemp(),
+        "mem": await mem(),
+        "fs_size": await fsSize(),
+        "net_stat_eth_in": await networkStats(system.eth_in),
+        "net_stat_eth_out": await networkStats(system.eth_out),
+        "net_stat_eth_mon": await networkStats(system.eth_mon),
+        "inet_check": await inetChecksite(system.api_url_dev),
+        "inet_latency": await inetLatency(system.api_url_dev),
+        //"processes":processes()
+    }
+
+
+}
+
+
+
+
+let testConnection = async function(){
+
+    //Doe een post met de API token 
+    let token = JSON.parse(fs.readFileSync('../myapp/storage/config.json', 'utf8')).user.api_token;
+
+}
+
+let cpuLoad = async function(){
+
+    try {
+        const data = await si.currentLoad();
+        //console.log(data);
+        return data;
+    }
+    catch (error) {
+        console.error(error);
+        return ""
+    }
+}
+
+
+let cpuTemp = async function(){
+
+    try {
+        const data = await si.cpuTemperature();
+        console.log(data);
+        return data;
+    }
+    catch (error) {
+        console.error(error);
+        return ""
+    }
+}
+
+
+let mem = async function(){
+    try {
+        const data = await si.mem();
+        //console.log(data);
+        return data;
+    }
+    catch (error) {
+        console.error(error);
+        return ""
+    }
+}
+
+let fsSize = async function(){
+    
+    try {
+        const data = await si.fsSize();
+        return {"total_size":data[0].size,"used":data[0].used}
+    }
+    catch (error) {
+         console.error(error);
+         return ""
+    }
+}
+
+
+
+let networkStats = async function(iface){
+
+    try {
+        const data = await si.networkStats();
+        //console.log(data);
+        return data;
+    }
+    catch (error) {
+        console.error(error);
+        return ""
+    }
+}
+
+
+let inetChecksite = async function(host){
+
+    try {
+        const data = await si.inetChecksite(host);
+        //console.log(data);
+        return data;
+    }
+    catch (error) {
+        console.error(error);
+        return ""
+    }
+}
+
+let inetLatency = async function(host){
+    try {
+        const data = await si.inetLatency(host);
+        //console.log(data);
+        return data;
+    }
+    catch (error) {
+        console.error(error);
+        return ""
+    }
+}
+
+
+getSystemData()
+
+module.exports = {
+    getSystemData,
+    testConnection
+}
