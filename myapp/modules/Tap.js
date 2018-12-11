@@ -5,7 +5,10 @@ var shelljs = require('shelljs');
 let startTap = async function(){
     //run script
     if(shelljs.which('w')){
+
+        //check of de startScript ook wel echt runt
         shelljs.exec('/home/monoid_dev/raspberry-pi/tap/startScript.sh')
+        return "Tap is Running"
     }else{
         return "windows"
     }
@@ -19,6 +22,7 @@ let stopTap = async function(){
     if(shelljs.which('w')){
 
     shelljs.exec('/home/monoid_dev/raspberry-pi/tap/stopScript.sh')
+    return "Tap Stoped"
     }else{
         return "windows"
 }

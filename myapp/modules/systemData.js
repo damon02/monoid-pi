@@ -5,21 +5,30 @@ var shelljs = require('shelljs');
 let getSystemData = async function(){
 
     let datetime = new Date();
-    var system = JSON.parse(fs.readFileSync('../myapp/storage/config.json', 'utf8')).system;
 
 
     if(shelljs.which('w')){
 
-        ram_usage = shelljs.exec("free -m | awk '/Mem:/ { print $3 } '") /shelljs.exec("free -m | awk '/Mem:/ { print $2 } '") * 100
+
+    mon_nic = {'avg':'0'}
+
+    in_nic ={'avg':'0'}
+
+    out_nic = {'avg':'0'}
+
+    nic = {mon_nic,in_nic, out_nic}
+
+
+    ram_usage = shelljs.exec("free -m | awk '/Mem:/ { print $3 } '") /shelljs.exec("free -m | awk '/Mem:/ { print $2 } '") * 100
 	file_usage = shelljs.exec("df -h | grep /dev/root | awk '{ print $5 }'")
     cpu_usage = 100 - shelljs.exec("echo $(vmstat 1 2|tail -1|awk '{print $15}')")
     
      return {
             "datetime": datetime,
-            "system": system,
             'ram_usage': Math.round(ram_usage),
             'filesys': file_usage.substr(0, file_usage.length -1),
-            'cpu_usage': cpu_usage
+            'cpu_usage': cpu_usage,
+            'nic': nic
         }
     }else{
         console.log('Windows')
@@ -29,6 +38,7 @@ let getSystemData = async function(){
             'ram_usage': 'BAH WINDOWS',
             'filesys': 'BAH WINDOWS',
             'cpu_usage': 'BAH WINDOWS',
+            'nic': nic
         }
 
     }

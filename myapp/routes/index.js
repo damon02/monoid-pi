@@ -5,11 +5,16 @@ const model = require('../models/user');
 const owasp = require('owasp-password-strength-test');
 const systemData = require('../modules/systemData')
 const Tap = require('../modules/Tap')
+const ip = require("ip");
+
+
 
 /* GET landing page. */
 router.get('/', function(req, res, next) {
-    res.render('index', { title: 'Monoid',message:"Mono1d_INC!"});
+    res.render('index', { title: 'Monoid',password:"Mono1d_INC!"});
 });
+
+
 
 
 // GET /dashboard
@@ -17,18 +22,12 @@ router.get('/dashboard', mid.requiresLogin, function(req, res, next) {
 
   let User = model.getUserObject()
 
-
-
-
   if (req.session.user && req.cookies.user_sid) {
-
-  systemData.getSystemData().then(systemData =>{
       return res.render('dashboard', 
-      { title: 'Dashboard', 
+      {title: 'Dashboard', 
       username: User.username, 
       token: User.api_token, 
-      system_data: systemData
-    });
+      ip_adr: ip.address()
     })
 
   }else{
@@ -91,8 +90,6 @@ router.post('/changedefault',mid.requiresLogin, (req, res,next) => {
   if (req.session.user && req.cookies.user_sid) {
 
     if (req.body.username_new && req.body.password_new  && req.body.password_new_verify) {
-
-
           if(req.body.password_new != req.body.password_new_verify){
             return res.render('changedefault', { message: 'New password does not match!'});
           }
@@ -110,6 +107,8 @@ router.post('/changedefault',mid.requiresLogin, (req, res,next) => {
               return model.updateUser(itemsToUpdate).then(function(new_storage_object){
                 model.writeToConfig(new_storage_object)
                 return res.redirect('/dashboard');
+              }).catch(err =>{
+                return res.redirect('/logout');
               })
             }else{
               return res.render('changedefault', { message: 'poor username'});
@@ -139,6 +138,8 @@ router.post('/updateApiToken',mid.requiresLogin, (req, res,next) => {
     return model.updateUser(itemsToUpdate).then(function(new_storage_object){
       model.writeToConfig(new_storage_object)
       return res.redirect('/dashboard');
+    }).catch(err =>{
+      return res.redirect('/logout');
     })
   }else{
     return res.render('dashboard', { message: 'Bad Token'});
@@ -158,6 +159,8 @@ router.post('/updateUsername',mid.requiresLogin, (req, res,next) => {
     return model.updateUser(itemsToUpdate).then(function(new_storage_object){
       model.writeToConfig(new_storage_object)
       return res.redirect('/dashboard');
+    }).catch(err =>{
+      return res.redirect('/logout');
     })
   }else{
     return res.render('/dashboard', { message: 'poor username'});
@@ -185,9 +188,11 @@ router.post('/updatePassword', mid.requiresLogin, (req, res,next) => {
     }else{
       let itemsToUpdate = {"password": req.body.password_new}
     return model.updateUser(itemsToUpdate).then(function(new_storage_object){
+
       model.writeToConfig(new_storage_object)
       return res.redirect('/dashboard');
     })
+
   }
   }else {
     err.status = 404;
@@ -204,6 +209,8 @@ router.post('/startTap',mid.requiresLogin, (req, res,next) => {
 
 
     Tap.startTap().then(response =>{
+
+      return response
       
     })
 
@@ -221,6 +228,7 @@ router.post('/stopTap',mid.requiresLogin, (req, res,next) => {
   if (req.session.user && req.cookies.user_sid) {
 
     Tap.stopTap().then(response =>{
+      return response
 
     })
   }else {
@@ -241,6 +249,8 @@ router.get('/testConnection',mid.requiresLogin, (req, res,next) => {
   })
 
 }) 
+
+
 
 
 

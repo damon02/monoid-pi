@@ -1,5 +1,6 @@
 extends layout
 
+
 block content
   h1= title
   container
@@ -36,20 +37,97 @@ block content
               form(method='POST' action='/testConnection')
                 button.btn.btn-info(type='submit') test connection
             .row-justify-content-center
-              form(method='POST' action='/startServie')
+              form(method='POST' action='/startService')
                 button.btn.btn-success(type='submit')  start service
             .row-justify-content-center
               form(method='POST' action='/stopService')
                 button.btn.btn-danger(type='submit') stop service
+              br
+              .row-justify-content-center
+                h4 CPU
+                  div
+                    h2(style="display: inline-block" id='cpu_usage') 0
+                    h4(style="display: inline-block") %
+              br
+              .row-justify-content-center
+                h4 RAM
+                  div
+                    h2(style="display: inline-block" id='ram_usage') 0
+                    h4(style="display: inline-block") %
 
-        .row-justify-content-center
-         ul
-          li="cpu usage: "+ system_data.cpu_usage + '%'
-          li="ram usage: "+ system_data.ram_usage + '%'
-          li="file system: "+ system_data.filesys + '%'
+              br
+              .row-justify-content-center
+                h4 SD
+                  div
+                    h2(style="display: inline-block" id='sd_usage') 0
+                    h4(style="display: inline-block") %
+
+
+              br
+              .row-justify-content-center
+                h4 System Time
+                  div
+                    h2(style="display: inline-block" id='sys_time') 0
+
+              br
+              .row-justify-content-center
+                h4 System Time
+                  div
+                    h2(style="display: inline-block" id='sys_time') 0
+
+              br
+              .row-justify-content-center
+                h4 Network
+                  div
+                    h2= "monitor"
+                    ul(id='nic_mon')
+
+                  div
+                    h2= "data in"
+                    ul(id='nic_in')
+                      
+
+                  div
+                    h2= "data out"
+                    ul(id='nic_out')
+                     
 
 
 
-      .col.meme
-        h3 Column 3
-        p bla bla
+                
+
+
+  script.
+    const socket = io();
+
+     "datetime": datetime,
+            "system": system,
+
+    socket.on('datetime', function(cpu_data) {document.getElementById('sys_time').innerHTML = sys_time;});
+
+    socket.on('cpu_usage', function(cpu_data) {document.getElementById('cpu_usage').innerHTML = cpu_data;});
+
+    socket.on('filesys', function(sd_data) {document.getElementById('sd_usage').innerHTML = sd_data});
+
+    socket.on('ram_usage', function(ram_data) {document.getElementById('ram_usage').innerHTML = ram_data;});
+    
+
+    //Kei experimenteel
+    //- socket.on('nic', function(nic_data) {
+
+    //-   for(let nic in nic_data){
+
+    //-       for(let key in nic_data[nic]){
+    //-             let node = document.createElement("LI");
+
+    //-             let textnode = document.createTextNode(nic_data[nic][key]);
+    //-             node.appendChild(textnode);   
+                
+    //-             document.getElementById(nic).appendChild(node);
+              
+    //-         }
+
+    //-   }
+
+      
+      });

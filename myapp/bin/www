@@ -7,12 +7,13 @@
 var app = require('../app');
 var debug = require('debug')('myapp:server');
 var http = require('http');
+const systemData = require('../modules/systemData')
 
 /**
  * Get port from environment and store in Express.
  */
 
-var port = normalizePort(process.env.PORT || '3000');
+var port = normalizePort(process.env.PORT || '31337');
 app.set('port', port);
 
 /**
@@ -20,6 +21,23 @@ app.set('port', port);
  */
 
 var server = http.createServer(app);
+
+
+var io = require('socket.io')(server)
+io.sockets.on('connection', function (socket) {
+
+  setInterval(function () {
+    systemData.getSystemData().then(systemData =>{
+      for(let key in systemData){
+        socket.emit(key, systemData[key])
+      }
+  })
+  
+}, 500); 
+
+
+});
+
 
 /**
  * Listen on provided port, on all network interfaces.
@@ -88,3 +106,5 @@ function onListening() {
     : 'port ' + addr.port;
   debug('Listening on ' + bind);
 }
+
+module.exports = io;

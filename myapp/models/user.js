@@ -1,5 +1,18 @@
 var bcrypt = require('bcryptjs');
 var fs = require('fs');
+var InputValidator = require('input-validate');
+
+
+
+custom_rules = {
+	alphabets: true,
+	numbers: '0-9',
+	spaces: false,
+	symbols: '-', 
+	minlength: '',
+	maxlength: '',
+};
+
 
 
 let authenticate = function(username, password, callback){
@@ -71,7 +84,11 @@ let updateUser = function(items_to_update){
                 storage.user[key] = hash        
             })
         }else{
-            storage.user[key] = items_to_update[key]
+            if(InputValidator.customOr(items_to_update[key], custom_rules)){
+                storage.user[key] = items_to_update[key]
+            }else{
+                return reject("weird characters used in "+ items_to_update[key])
+            }
         }
     }
     return resolve(storage)
