@@ -52,16 +52,6 @@ let getSystemData = async function(){
 
 }
 
-
-
-
-let testConnection = async function(){
-
-    //Doe een post met de API token 
-    let token = JSON.parse(fs.readFileSync('../myapp/storage/config.json', 'utf8')).user.api_token;
-
-}
-
 let cpuLoad = async function(){
 
     try {
@@ -156,6 +146,5 @@ let inetLatency = async function(host){
 }
 
 module.exports = {
-    getSystemData,
-    testConnection
+    getSystemData
 }

@@ -4,7 +4,11 @@ var shelljs = require('shelljs');
 
 let startTap = async function(){
     //run script
-    shelljs.exec('startScript.sh')
+    if(shelljs.which('w')){
+        shelljs.exec('/home/monoid_dev/raspberry-pi/tap/startScript.sh')
+    }else{
+        return "windows"
+    }
 
     //verify that it is running correctly
 }
@@ -12,7 +16,13 @@ let startTap = async function(){
 
 let stopTap = async function(){
     //run script
-    shelljs.exec('stopScript.sh')
+    if(shelljs.which('w')){
+
+    shelljs.exec('/home/monoid_dev/raspberry-pi/tap/stopScript.sh')
+    }else{
+        return "windows"
+}
+
 
     //verify that it stopped correctly
 
@@ -20,7 +30,13 @@ let stopTap = async function(){
 
 let isRunning = async function(){
     //run script
-    shelljs.exec('isRunning.sh')
+
+    if(shelljs.which('w')){
+        shelljs.exec('/home/monoid_dev/raspberry-pi/tap/isRunning.sh')
+    }else{
+        return "windows"
+    }
+
 
     //check if it is running or not
 }
@@ -28,5 +44,26 @@ let isRunning = async function(){
 let tapInfo = async function(){
 
     //check if it is running propperly
-    shelljs.exec('tapInfo.sh')
+    if(shelljs.which('w')){
+        shelljs.exec('/home/monoid_dev/raspberry-pi/tap/tapInfo.sh')
+    }else{
+        return "windows"
+    }
+}
+
+let tapTest = async function(){
+
+    if(shelljs.which('w')){
+        shelljs.exec('/home/monoid_dev/raspberry-pi/tap/tapTest.sh')
+    }else{
+        return "windows"
+    }
+}
+
+
+module.exports = {
+    tapInfo,
+    isRunning,
+    stopTap,
+    startTap
 }

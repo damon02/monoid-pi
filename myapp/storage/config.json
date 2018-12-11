@@ -11,8 +11,8 @@
     "eth_in": "eth1",
     "eth_out": "eth2",
     "eth_mon": "eth0",
-    "api_url_prod": "http://145.24.222.68",
-    "api_url_ext_prod": "/api",
-    "api_port_prod": "80"
+    "api_url_prod": "https://api.monoidinc.nl",
+    "api_url_ext_prod": "/data/store-packets",
+    "api_port_prod": "443"
   }
 }

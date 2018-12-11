@@ -2,8 +2,9 @@ const express = require('express');
 const router = express.Router();
 const mid = require('../middleware');
 const model = require('../models/user');
-var owasp = require('owasp-password-strength-test');
+const owasp = require('owasp-password-strength-test');
 const systemData = require('../modules/systemData')
+const Tap = require('../modules/Tap')
 
 /* GET landing page. */
 router.get('/', function(req, res, next) {
@@ -85,7 +86,7 @@ router.get('/changedefault', mid.requiresLogin, function(req, res, next) {
 });
 
 
-router.post('/changedefault', (req, res,next) => {
+router.post('/changedefault',mid.requiresLogin, (req, res,next) => {
 
   if (req.session.user && req.cookies.user_sid) {
 
@@ -126,76 +127,113 @@ router.post('/changedefault', (req, res,next) => {
   }
 });
 
-router.get('/userData', (req, res,next) => {
+// router.get('/userData', (req, res,next) => {
 
-}) 
+// }) 
 
-router.post('/updateApiToken', (req, res,next) => {
+router.post('/updateApiToken',mid.requiresLogin, (req, res,next) => {
 
-
-  console.log(req.body)
-  if(req.body.apiToken.length > 5 && req.body.apiToken.length  < 40){
-    let itemsToUpdate = {"api_token": req.body.apiToken}
-  return model.updateUser(itemsToUpdate).then(function(new_storage_object){
-    model.writeToConfig(new_storage_object)
-    return res.redirect('/dashboard');
-  })
-}else{
-  return res.render('dashboard', { message: 'Bad Token'});
+  if (req.session.user && req.cookies.user_sid) {
+    if(req.body.apiToken.length > 5 && req.body.apiToken.length  < 40){
+      let itemsToUpdate = {"api_token": req.body.apiToken}
+    return model.updateUser(itemsToUpdate).then(function(new_storage_object){
+      model.writeToConfig(new_storage_object)
+      return res.redirect('/dashboard');
+    })
+  }else{
+    return res.render('dashboard', { message: 'Bad Token'});
+  }
+  }else {
+    err.status = 404;
+    return next(err);
 }
+
 })
 
 
-router.post('/updateUsername', (req, res,next) => {
-
-  if(req.body.username.length > 3 && req.body.username.length  < 30){
-    let itemsToUpdate = {"username": req.body.username}
-  return model.updateUser(itemsToUpdate).then(function(new_storage_object){
-    model.writeToConfig(new_storage_object)
-    return res.redirect('/dashboard');
-  })
-}else{
-  return res.render('/dashboard', { message: 'poor username'});
-}
-
-  
-}) 
-
-
-router.post('/updatePassword', (req, res,next) => {
-
-  if(req.body.password_new != req.body.password_new_verify){
-    return res.render('changedefault', { message: 'New password does not match!'});
-  }
-
-  let result = owasp.test(req.body.password_new);
-
-  if(result.errors.length > 1){
-    return res.render('changedefault', { message: 'Password too weak!'});
+router.post('/updateUsername',mid.requiresLogin, (req, res,next) => {
+  if (req.session.user && req.cookies.user_sid) {
+    if(req.body.username.length > 3 && req.body.username.length  < 30){
+      let itemsToUpdate = {"username": req.body.username}
+    return model.updateUser(itemsToUpdate).then(function(new_storage_object){
+      model.writeToConfig(new_storage_object)
+      return res.redirect('/dashboard');
+    })
   }else{
-    let itemsToUpdate = {"password": req.body.password_new}
-  return model.updateUser(itemsToUpdate).then(function(new_storage_object){
-    model.writeToConfig(new_storage_object)
-    return res.redirect('/dashboard');
-  })
+    return res.render('/dashboard', { message: 'poor username'});
+  }
+  }else {
+    err.status = 404;
+    return next(err);
 }
+  
+}) 
+
+
+router.post('/updatePassword', mid.requiresLogin, (req, res,next) => {
+
+  if (req.session.user && req.cookies.user_sid) {
+
+    if(req.body.password_new != req.body.password_new_verify){
+      return res.render('changedefault', { message: 'New password does not match!'});
+    }
+  
+    let result = owasp.test(req.body.password_new);
+  
+    if(result.errors.length > 1){
+      return res.render('changedefault', { message: 'Password too weak!'});
+    }else{
+      let itemsToUpdate = {"password": req.body.password_new}
+    return model.updateUser(itemsToUpdate).then(function(new_storage_object){
+      model.writeToConfig(new_storage_object)
+      return res.redirect('/dashboard');
+    })
+  }
+  }else {
+    err.status = 404;
+    return next(err);
+}
+
+  
 
   
 }) 
 
-router.post('/startTap', (req, res,next) => {
+router.post('/startTap',mid.requiresLogin, (req, res,next) => {
+  if (req.session.user && req.cookies.user_sid) {
+
+
+    Tap.startTap().then(response =>{
+      
+    })
+
+
+
+  }else {
+    err.status = 404;
+    return next(err);
+}
 
 }) 
 
 
-router.post('/stopTap', (req, res,next) => {
+router.post('/stopTap',mid.requiresLogin, (req, res,next) => {
+  if (req.session.user && req.cookies.user_sid) {
+
+    Tap.stopTap().then(response =>{
+
+    })
+  }else {
+    err.status = 404;
+    return next(err);
+}
 
 }) 
 
 
-router.get('/testConnection', (req, res,next) => {
+router.get('/testConnection',mid.requiresLogin, (req, res,next) => {
 
-  systemData.testConnection().then(response =>{
+  Tap.testConnection().then(response =>{
 
     return response
   }).catch( err =>{

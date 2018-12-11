@@ -36,9 +36,11 @@ block content
               form(method='POST' action='/testConnection')
                 button.btn.btn-info(type='submit') test connection
             .row-justify-content-center
-              button.btn.btn-success start service
+              form(method='POST' action='/startServie')
+                button.btn.btn-success(type='submit')  start service
             .row-justify-content-center
-              button.btn.btn-danger stop service
+              form(method='POST' action='/stopService')
+                button.btn.btn-danger(type='submit') stop service
 
         .row-justify-content-center
          ul
