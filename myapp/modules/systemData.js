@@ -10,13 +10,16 @@ let getSystemData = async function(){
 
     if(shelljs.which('w')){
 
-        ram_usage = shelljs.exec("free -m | awk '/Mem:/ { print $3 } '") /shelljs.exec("free -m | awk '/Mem:/ { print $2 } '")
-        return {
+        ram_usage = shelljs.exec("free -m | awk '/Mem:/ { print $3 } '") /shelljs.exec("free -m | awk '/Mem:/ { print $2 } '") * 100
+	    file_usage = shelljs.exec("df -h | grep /dev/root | awk '{ print $5 }'")
+	    cpu_usage = 100 - shelljs.exec("echo $(vmstat 1 2|tail -1|awk '{print $15}')")
+
+     return {
             "datetime": datetime,
             "system": system,
             'ram_usage': ram_usage,
-            'filesys': shelljs.exec('df -h | grep /dev/root'),
-            'cpu_usage': shelljs.exec("top -n1 | awk '/Cpu\(s\):/ {print $4}'")
+            'filesys': file_usage.substr(0, file_usage.length-1),
+            'cpu_usage': cpu_usage
         }
     }else{
         console.log('Windows')
