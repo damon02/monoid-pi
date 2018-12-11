@@ -11,8 +11,8 @@
     "eth_in": "eth1",
     "eth_out": "eth2",
     "eth_mon": "eth0",
-    "api_url_dev": "8.8.8.8",
-    "api_url_test": "192.168.1.153",
-    "api_url_prod": ""
+    "api_url_prod": "http://145.24.222.68",
+    "api_url_ext_prod": "/api",
+    "api_port_prod": "80"
   }
 }

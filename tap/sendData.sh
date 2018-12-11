@@ -1,11 +1,14 @@
 #!/bin/bash
 
 FILE_PATH="outputFiles/"
-API_URL="http://192.168.1.235"
-API_PORT="3000"
-API_HOST="$API_URL:$API_PORT"
+API_URL_PROD=cat ../myapp/storage/config.json | jq ".system.api_url_prod"
+API_PORT_PROD=cat ../myapp/storage/config.json | jq ".system.api_port_prod"
+API_URL_EXT_PROD=cat ../myapp/storage/config.json | jq ".system.api_url_ext_prod"
 
-echo "$API_HOST"
+API_HOST_TEST="http://192.168.1.235:3000"
+API_HOST_PROD="$API_URL_PROD:$API_PORT_PROD$API_URL_EXT_PROD"
+
+echo "$API_HOST_TEST"
 
 inotifywait -m $FILE_PATH -e create -e moved_to |
 	while read path action file; do
@@ -16,7 +19,7 @@ inotifywait -m $FILE_PATH -e create -e moved_to |
 		   JSON=`tshark -r $FILE  -T json`
 		   BODY="{\"body\" : $JSON}"
 		   echo "$BODY" > tmp.json
-		   RESPONSE=`curl -d @tmp.json --header "Content-Type: application/json" -X POST $API_HOST`
+		   RESPONSE=`curl -d @tmp.json --header "Content-Type: application/json" -X POST $API_HOST_TEST`
 
 		   if [[ $RESPONSE == *"true"* ]]
 		   then
