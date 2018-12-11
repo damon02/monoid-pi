@@ -11,14 +11,14 @@ let getSystemData = async function(){
     if(shelljs.which('w')){
 
         ram_usage = shelljs.exec("free -m | awk '/Mem:/ { print $3 } '") /shelljs.exec("free -m | awk '/Mem:/ { print $2 } '") * 100
-	    file_usage = shelljs.exec("df -h | grep /dev/root | awk '{ print $5 }'")
-	    cpu_usage = 100 - shelljs.exec("echo $(vmstat 1 2|tail -1|awk '{print $15}')")
-
+	file_usage = shelljs.exec("df -h | grep /dev/root | awk '{ print $5 }'")
+    cpu_usage = 100 - shelljs.exec("echo $(vmstat 1 2|tail -1|awk '{print $15}')")
+    
      return {
             "datetime": datetime,
             "system": system,
-            'ram_usage': ram_usage,
-            'filesys': file_usage.substr(0, file_usage.length-1),
+            'ram_usage': Math.round(ram_usage),
+            'filesys': file_usage.substr(0, file_usage.length -1),
             'cpu_usage': cpu_usage
         }
     }else{
@@ -26,9 +26,9 @@ let getSystemData = async function(){
         return {
             "datetime": datetime,
             "system": system,
-            'ram': 'BAH WINDOWS',
+            'ram_usage': 'BAH WINDOWS',
             'filesys': 'BAH WINDOWS',
-            'cpu': 'BAH WINDOWS',
+            'cpu_usage': 'BAH WINDOWS',
         }
 
     }
@@ -154,9 +154,6 @@ let inetLatency = async function(host){
         return ""
     }
 }
-
-
-getSystemData()
 
 module.exports = {
     getSystemData,

@@ -41,24 +41,11 @@ block content
               button.btn.btn-danger stop service
 
         .row-justify-content-center
-          h4 File System
-          
-          ul
-            //li=  'total size: '+system_data.fs_size.total_size
-            //li=  'used: '+system_data.fs_size.used
+         ul
+          li="cpu usage: "+ system_data.cpu_usage + '%'
+          li="ram usage: "+ system_data.ram_usage + '%'
+          li="file system: "+ system_data.filesys + '%'
 
-          h4 Memory System
-          ul
-
-          h4 CPU
-          ul
-            //li= 'current cpu (%) '+system_data.cpu_load.currentload
-
-          h4 Network
-          ul
-
-          h4 Interfaces
-          ul
 
 
       .col.meme
