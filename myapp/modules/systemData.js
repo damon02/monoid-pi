@@ -1,44 +1,58 @@
 //const si = require('systeminformation')
-const fs = require('fs');
 var shelljs = require('shelljs');
 
 let getSystemData = async function(){
 
-    let datetime = new Date();
+    let datetime = new Date().toISOString()
+    .replace(/T/, ' ')
+    .replace(/\..+/, '')
+
+    let mon_nic = {}
+    let br_nic = {}
+
 
 
     if(shelljs.which('w')){
+   
+    if(shelljs.test('-e','cat /sys/class/net/eth0/statistics/rx_bytes')){
+        mon_nic = {'rx_bytes':shelljs.exec("cat /sys/class/net/eth0/statistics/rx_bytes"),
+            'tx_bytes': shelljs.exec("cat /sys/class/net/eth0/statistics/tx_bytes"),
+            'tx_dropped': shelljs.exec("cat /sys/class/net/eth0/statistics/tx_dropped"),
+            'tx_packets': shelljs.exec("cat /sys/class/net/eth0/statistics/tx_packets")
+        }
+    }
+
+    if(shelljs.test('-e','/sys/class/net/br0/statistics/rx_bytes')){
+    shelljs.exec("cat /sys/class/net/br0/statistics/rx_bytes")
+        br_nic = {'rx_bytes': shelljs.exec("cat /sys/class/net/br0/statistics/rx_bytes"),
+            'tx_bytes': shelljs.exec("cat /sys/class/net/br0/statistics/tx_bytes"),
+            'rx_packets':shelljs.exec("cat /sys/class/net/br0/statistics/rx_packets"),
+            'tx_packets':shelljs.exec("cat /sys/class/net/br0/statistics/tx_packets"),
+            'rx_dropped':shelljs.exec("cat /sys/class/net/br0/statistics/rx_dropped"),
+            'tx_dropped': shelljs.exec("cat /sys/class/net/br0/statistics/tx_dropped")
+        }
+    }
 
 
-    mon_nic = {'avg':'0'}
-
-    in_nic ={'avg':'0'}
-
-    out_nic = {'avg':'0'}
-
-    nic = {mon_nic,in_nic, out_nic}
-
-
-    ram_usage = shelljs.exec("free -m | awk '/Mem:/ { print $3 } '") /shelljs.exec("free -m | awk '/Mem:/ { print $2 } '") * 100
-	file_usage = shelljs.exec("df -h | grep /dev/root | awk '{ print $5 }'")
-    cpu_usage = 100 - shelljs.exec("echo $(vmstat 1 2|tail -1|awk '{print $15}')")
+    let ram_usage = shelljs.exec("free -m | awk '/Mem:/ { print $3 } '") /shelljs.exec("free -m | awk '/Mem:/ { print $2 } '") * 100
+	let file_usage = shelljs.exec("df -h | grep /dev/root | awk '{ print $5 }'")
+    let cpu_usage = 100 - shelljs.exec("echo $(vmstat 1 2|tail -1|awk '{print $15}')")
     
      return {
             "datetime": datetime,
             'ram_usage': Math.round(ram_usage),
             'filesys': file_usage.substr(0, file_usage.length -1),
             'cpu_usage': cpu_usage,
-            'nic': nic
+            'nic': {'mon_nic':mon_nic, 'br_nic':br_nic}
         }
     }else{
-        console.log('Windows')
+        //niet pi
         return {
             "datetime": datetime,
-            "system": system,
-            'ram_usage': 'BAH WINDOWS',
-            'filesys': 'BAH WINDOWS',
-            'cpu_usage': 'BAH WINDOWS',
-            'nic': nic
+            'ram_usage': 'N/A',
+            'filesys': 'N/A',
+            'cpu_usage': 'N/A',
+            'nic': {'mon_nic':mon_nic, 'br_nic':br_nic}
         }
 
     }

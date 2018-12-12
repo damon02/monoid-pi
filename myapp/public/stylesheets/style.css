@@ -10,3 +10,12 @@ a {
 .meme {
   text-align: center;
 }
+
+
+.offlineText{
+  color: rgb(255, 0, 0);
+}
+
+.onlineText{
+  color: chartreuse
+}

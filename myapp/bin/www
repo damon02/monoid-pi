@@ -8,6 +8,8 @@ var app = require('../app');
 var debug = require('debug')('myapp:server');
 var http = require('http');
 const systemData = require('../modules/systemData')
+const Tap = require('../modules/Tap')
+
 
 /**
  * Get port from environment and store in Express.
@@ -24,8 +26,47 @@ var server = http.createServer(app);
 
 
 var io = require('socket.io')(server)
+
+
 io.sockets.on('connection', function (socket) {
 
+  socket.on('stopTap', function(){
+  
+    Tap.stopTap().then(result =>{
+      socket.emit('tap_status_change',result)
+    })
+  
+  })
+  
+  
+socket.on('testApiConnection', function(){
+
+  Tap.testConnection().then(connection_status =>{
+    socket.emit('connection_status',connection_status)
+  })
+
+})
+
+
+  socket.on('startTap', function(){
+    Tap.startTap().then(result =>{
+      socket.emit('tap_status_change',result)
+    })
+  
+  })
+
+    Tap.testConnection().then(body =>{
+
+      socket.emit('connection_status',body)
+
+    }).catch(err =>{
+
+      socket.emit('connection_status', {success:'false', message:'Fatal error'})
+
+    })
+
+
+//get system data each second
   setInterval(function () {
     systemData.getSystemData().then(systemData =>{
       for(let key in systemData){
@@ -33,8 +74,15 @@ io.sockets.on('connection', function (socket) {
       }
   })
   
-}, 500); 
+}, 1000); 
 
+// //check api status each second
+// setInterval(function () {
+//   Tap.testConnection().then(connection_status =>{
+//     socket.emit('connection_status',connection_status)
+// })
+
+// }, 60000); 
 
 });
 

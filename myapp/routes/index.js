@@ -224,31 +224,33 @@ router.post('/startTap',mid.requiresLogin, (req, res,next) => {
 }) 
 
 
-router.post('/stopTap',mid.requiresLogin, (req, res,next) => {
-  if (req.session.user && req.cookies.user_sid) {
+// router.post('/stopTap',mid.requiresLogin, (req, res,next) => {
+//   if (req.session.user && req.cookies.user_sid) {
 
-    Tap.stopTap().then(response =>{
-      return response
+//     Tap.stopTap().then(response =>{
+//       return response
 
-    })
-  }else {
-    err.status = 404;
-    return next(err);
-}
+//     })
+//   }else {
+//     err.status = 404;
+//     return next(err);
+// }
 
-}) 
+// }) 
 
 
-router.get('/testConnection',mid.requiresLogin, (req, res,next) => {
+// router.post('/testConnection',mid.requiresLogin, (req, res,next) => {
 
-  Tap.testConnection().then(response =>{
+//   Tap.testConnection().then(response =>{
 
-    return response
-  }).catch( err =>{
-    return err
-  })
+    
 
-}) 
+//     return response
+//   }).catch( err =>{
+//     return err
+//   })
+
+// }) 
 
 
 

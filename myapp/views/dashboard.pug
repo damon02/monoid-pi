@@ -2,11 +2,15 @@ extends layout
 
 
 block content
-  h1= title
+  container
+    nav(class='navbar fixed-top navbar-dark bg-dark')
+      span(class='navbar-brand mb-0 h1') Dashboard
+      span(class="navbar-text navbar-right") signed in as #{username}
+    br
   container
     .row
       .col-2
-        h3 User settings
+        h2 User
         form(method='POST' action='/updateUsername')
           div.form-group
             input.form-control(type='text' id='username' placeholder='username' value=username name='username' required autocomplete="off")
@@ -29,81 +33,95 @@ block content
 
             button.btn.btn-primary(type='submit') Change password
 
-      .col.meme
-        h3 System
+      .col-4
+        h2 System
         .row-justify-content-center
-          .col.meme
-            .row-justify-content-center
-              form(method='POST' action='/testConnection')
-                button.btn.btn-info(type='submit') test connection
-            .row-justify-content-center
-              form(method='POST' action='/startService')
-                button.btn.btn-success(type='submit')  start service
-            .row-justify-content-center
-              form(method='POST' action='/stopService')
-                button.btn.btn-danger(type='submit') stop service
-              br
-              .row-justify-content-center
-                h4 CPU
-                  div
-                    h2(style="display: inline-block" id='cpu_usage') 0
-                    h4(style="display: inline-block") %
-              br
-              .row-justify-content-center
-                h4 RAM
-                  div
-                    h2(style="display: inline-block" id='ram_usage') 0
-                    h4(style="display: inline-block") %
+          h4 Time
+          div
+            h2(style="display: inline-block" id='sys_time') 0
 
-              br
-              .row-justify-content-center
+            hr
+            .row
+              .col
+                h4 CPU
+                div
+                  h2(style="display: inline-block" id='cpu_usage') 0
+                  h4(style="display: inline-block") %
+              .col
+                h4 RAM
+                div
+                  h2(style="display: inline-block" id='ram_usage') 0
+                  h4(style="display: inline-block") %
+            hr
+            .row
+              .col
                 h4 SD
                   div
                     h2(style="display: inline-block" id='sd_usage') 0
                     h4(style="display: inline-block") %
-
-
-              br
-              .row-justify-content-center
-                h4 System Time
+              .col
+                h4 Status
                   div
-                    h2(style="display: inline-block" id='sys_time') 0
+                  button.btn.btn-lg.btn-success Operational
+            hr
+            .row-justify-content-center
+              h3 Network
+                div
+                  h4= "monitor"
+                  div(id='mon_nic')
 
-              br
-              .row-justify-content-center
-                h4 System Time
-                  div
-                    h2(style="display: inline-block" id='sys_time') 0
+                hr
+                div
+                  h4= "bridge"
+                  div(id='br_nic')
 
-              br
-              .row-justify-content-center
-                h4 Network
-                  div
-                    h2= "monitor"
-                    ul(id='nic_mon')
+      .col.meme
+        .row-justify-content-center
+        div
+          button.btn.btn-info(onClick='testApiConnection()') test API connection
 
-                  div
-                    h2= "data in"
-                    ul(id='nic_in')
-                      
+          p(id='connection_status') not tested
 
-                  div
-                    h2= "data out"
-                    ul(id='nic_out')
-                     
+        .row-justify-content-center
+        div
+          button.btn.btn-success(onClick='startTap()')  start tap
+
+        .row-justify-content-center
+        div
+          button.btn.btn-danger(onClick='stopTap()') stop tap
 
 
-
-                
+        .row-justify-content-center
+        div
+          h2(id='current_tap_status') Not running
 
 
   script.
     const socket = io();
 
-     "datetime": datetime,
-            "system": system,
 
-    socket.on('datetime', function(cpu_data) {document.getElementById('sys_time').innerHTML = sys_time;});
+    function testApiConnection(){
+        socket.emit('testApiConnection');
+    }
+
+
+    function startTap(){
+
+        socket.emit('startTap');
+    }
+
+    function stopTap(){
+        socket.emit('stopTap');
+    }
+
+    socket.on('tap_status_change', function(status){
+
+      document.getElementById('current_tap_status').innerHTML = status
+    })
+
+
+
+    socket.on('datetime', function(sys_time) {document.getElementById('sys_time').innerHTML = sys_time;});
 
     socket.on('cpu_usage', function(cpu_data) {document.getElementById('cpu_usage').innerHTML = cpu_data;});
 
@@ -112,22 +130,40 @@ block content
     socket.on('ram_usage', function(ram_data) {document.getElementById('ram_usage').innerHTML = ram_data;});
     
 
+    socket.on('connection_status', function(connection_status) {
+      if(connection_status.success === false){
+        document.getElementById('connection_status').innerHTML = "<span class='offlineText'>API connection error: "+connection_status.message+"</span>"
+      }else{
+        document.getElementById('connection_status').innerHTML = "<span class='onlineText'>API connected</span>"
+      }
+      
+      
+      });
+
+
     //Kei experimenteel
-    //- socket.on('nic', function(nic_data) {
+    socket.on('nic', function(nic_data) {
+      for(let nic in nic_data){
+          if(Object.keys(nic_data[nic]).length === 0){
+            document.getElementById(nic).innerHTML = "<small class='offlineText'>offline</small>";
+          }else{
 
-    //-   for(let nic in nic_data){
+            for(let key in nic_data[nic]){
 
-    //-       for(let key in nic_data[nic]){
-    //-             let node = document.createElement("LI");
 
-    //-             let textnode = document.createTextNode(nic_data[nic][key]);
-    //-             node.appendChild(textnode);   
-                
-    //-             document.getElementById(nic).appendChild(node);
+            let node = document.createElement("LI");
+
+            let textnode = document.createTextNode(nic_data[nic][key]);
+            node.appendChild(textnode);   
+            
+            document.getElementById(nic).appendChild(node);
               
-    //-         }
+            }
 
-    //-   }
+          }
+
+
+      }
 
       
       });
