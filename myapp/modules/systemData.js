@@ -8,18 +8,18 @@ let getSystemData = async function(){
     .replace(/T/, ' ')
     .replace(/\..+/, '')
 
-    let mon_nic = {}
-    let br_nic = {}
+    let mon_nic = {'status': 'not detected'}
+    let br_nic = {'status': 'not detected'}
 
 
     if(shelljs.which('w')){
 
-    if(shelljs.test('-e','/sys/class/net/eth0/statistics/rx_bytes',{silent: true})){
-        mon_nic =  {'online':true}
+    if(shelljs.test('-e','/sys/class/net/eth0/operstate',{silent: true})){
+        mon_nic =  {'status':shelljs.cat('/sys/class/net/br0/operstate',{silent: true})}
     }
 
-    if(shelljs.test('-e','/sys/class/net/br0/statistics/rx_bytes',{silent: true})){
-        br_nic = {'online':true}
+    if(shelljs.test('-e','/sys/class/net/br0/operstate',{silent: true})){
+        br_nic = {'status':shelljs.cat('/sys/class/net/br0/operstate',{silent: true})}
 
     }
 

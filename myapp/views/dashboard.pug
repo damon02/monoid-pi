@@ -157,10 +157,10 @@ block content
     //Kei experimenteel
     socket.on('nic', function(nic_data) {
       for(let nic in nic_data){
-          if(Object.keys(nic_data[nic]).length === 0){
-            document.getElementById(nic).innerHTML = "<small class='offlineText'>offline</small>";
+          if(Object.keys(nic_data[nic]).status !== 'up'){
+            document.getElementById(nic).innerHTML = "<small class='offlineText'>"+nic_data[nic].status+"</small>";
           }else{
-            document.getElementById(nic).innerHTML = "<small class='onlineText'>online</small>";              
+            document.getElementById(nic).innerHTML = "<small class='onlineText'>"+nic_data[nic].status+"</small>";              
             }
           }
       });
