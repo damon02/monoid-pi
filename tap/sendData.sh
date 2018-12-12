@@ -20,7 +20,11 @@ inotifywait -m $FILE_PATH -e create -e moved_to |
         	#echo "The file '$file' appeared in the dir '$path' via '$action'"
 		FILE=`find $FILE_PATH -maxdepth 1 | sort -t_ -nk2,2 | tail -n -2 | head -1`
 		if [ -s $FILE ]
+		FILE_SIZE=$(stat -c%s "$FILE")
 		then
+		if [[ $FILE_SIZE > 744 ]]
+		then
+
 		   JSON=`tshark -r $FILE  -T json`
 		   BODY="{\"body\" : $JSON}"
 		   echo "$BODY" > /home/monoid_dev/raspberry-pi/tap/tmp.json
@@ -32,6 +36,9 @@ inotifywait -m $FILE_PATH -e create -e moved_to |
 		   else
 		      echo "Error in response!"
 		   fi
+		else
+		  echo "packet too small (probably br0 disconnected) "
+		fi
 		else
 		   echo "File is Empty"
 		fi

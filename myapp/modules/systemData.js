@@ -1,4 +1,5 @@
 //const si = require('systeminformation')
+const fs = require('fs');
 var shelljs = require('shelljs');
 
 let getSystemData = async function(){
@@ -11,38 +12,30 @@ let getSystemData = async function(){
     let br_nic = {}
 
 
-
     if(shelljs.which('w')){
-   
+
     if(shelljs.test('-e','cat /sys/class/net/eth0/statistics/rx_bytes')){
-        mon_nic = {'rx_bytes':shelljs.exec("cat /sys/class/net/eth0/statistics/rx_bytes"),
-            'tx_bytes': shelljs.exec("cat /sys/class/net/eth0/statistics/tx_bytes"),
-            'tx_dropped': shelljs.exec("cat /sys/class/net/eth0/statistics/tx_dropped"),
-            'tx_packets': shelljs.exec("cat /sys/class/net/eth0/statistics/tx_packets")
-        }
+        mon_nic =  {'online':true}
     }
 
     if(shelljs.test('-e','/sys/class/net/br0/statistics/rx_bytes')){
     shelljs.exec("cat /sys/class/net/br0/statistics/rx_bytes")
-        br_nic = {'rx_bytes': shelljs.exec("cat /sys/class/net/br0/statistics/rx_bytes"),
-            'tx_bytes': shelljs.exec("cat /sys/class/net/br0/statistics/tx_bytes"),
-            'rx_packets':shelljs.exec("cat /sys/class/net/br0/statistics/rx_packets"),
-            'tx_packets':shelljs.exec("cat /sys/class/net/br0/statistics/tx_packets"),
-            'rx_dropped':shelljs.exec("cat /sys/class/net/br0/statistics/rx_dropped"),
-            'tx_dropped': shelljs.exec("cat /sys/class/net/br0/statistics/tx_dropped")
-        }
+        br_nic = {'online':true}
+
     }
 
-
     let ram_usage = shelljs.exec("free -m | awk '/Mem:/ { print $3 } '") /shelljs.exec("free -m | awk '/Mem:/ { print $2 } '") * 100
-	let file_usage = shelljs.exec("df -h | grep /dev/root | awk '{ print $5 }'")
-    let cpu_usage = 100 - shelljs.exec("echo $(vmstat 1 2|tail -1|awk '{print $15}')")
+	let file_usage = shelljs.exec("df -h | grep /dev/root | awk '{ print $5 }'",{silent: true})
+    let cpu_usage = shelljs.exec("grep 'cpu ' /proc/stat | awk '{usage=($2+$4)*100 / ($2+$4+$5)} END {print usage}'",{silent: true})
+
+    let cpu_temp = shelljs.exec("cat /sys/class/thermal/thermal_zone0/temp",{silent: true}) /1000
     
      return {
             "datetime": datetime,
             'ram_usage': Math.round(ram_usage),
-            'filesys': file_usage.substr(0, file_usage.length -1),
-            'cpu_usage': cpu_usage,
+            'filesys': file_usage.substr(0, file_usage.length -2),
+            'cpu_usage': Math.round(cpu_usage),
+            'cpu_temp': cpu_temp,
             'nic': {'mon_nic':mon_nic, 'br_nic':br_nic}
         }
     }else{
@@ -52,6 +45,8 @@ let getSystemData = async function(){
             'ram_usage': 'N/A',
             'filesys': 'N/A',
             'cpu_usage': 'N/A',
+            'cpu_temp': 'N/A',
+
             'nic': {'mon_nic':mon_nic, 'br_nic':br_nic}
         }
 

@@ -42,7 +42,10 @@ io.sockets.on('connection', function (socket) {
 socket.on('testApiConnection', function(){
 
   Tap.testConnection().then(connection_status =>{
+
     socket.emit('connection_status',connection_status)
+  }).catch(err =>{
+    socket.emit('connection_status',{success:false,message:err})
   })
 
 })
@@ -55,15 +58,13 @@ socket.on('testApiConnection', function(){
   
   })
 
-    Tap.testConnection().then(body =>{
+  Tap.testConnection().then(connection_status =>{
 
-      socket.emit('connection_status',body)
+    socket.emit('connection_status',connection_status)
+  }).catch(err =>{
+    socket.emit('connection_status',{success:false,message:err})
+  })
 
-    }).catch(err =>{
-
-      socket.emit('connection_status', {success:'false', message:'Fatal error'})
-
-    })
 
 
 //get system data each second

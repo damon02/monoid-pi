@@ -45,24 +45,25 @@ block content
               .col
                 h4 CPU
                 div
-                  h2(style="display: inline-block" id='cpu_usage') 0
+                  h2(style="display: inline-block" id='cpu_usage') -
                   h4(style="display: inline-block") %
               .col
-                h4 RAM
+                h4 TEMP
                 div
-                  h2(style="display: inline-block" id='ram_usage') 0
-                  h4(style="display: inline-block") %
+                  h2(style="display: inline-block" id='cpu_temp') -
+                  h4(style="display: inline-block") &#8451;
             hr
             .row
               .col
                 h4 SD
                   div
-                    h2(style="display: inline-block" id='sd_usage') 0
+                    h2(style="display: inline-block" id='sd_usage') -
                     h4(style="display: inline-block") %
               .col
-                h4 Status
-                  div
-                  button.btn.btn-lg.btn-success Operational
+                h4 RAM
+                div
+                  h2(style="display: inline-block" id='ram_usage') -
+                  h4(style="display: inline-block") %
             hr
             .row-justify-content-center
               h3 Network
@@ -75,25 +76,29 @@ block content
                   h4= "bridge"
                   div(id='br_nic')
 
-      .col.meme
-        .row-justify-content-center
-        div
-          button.btn.btn-info(onClick='testApiConnection()') test API connection
-
-          p(id='connection_status') not tested
+      .col
+        h2 Status
 
         .row-justify-content-center
-        div
-          button.btn.btn-success(onClick='startTap()')  start tap
+          div
+            h2(id='current_tap_status') Not running
 
         .row-justify-content-center
-        div
-          button.btn.btn-danger(onClick='stopTap()') stop tap
+          div
+            button.btn.btn-info(onClick='testApiConnection()') test API connection
+            span(id='connection_status') not tested
+        br
+        .row
+          .col
+            div
+              button.btn.btn-success(onClick='startTap()') start tap
+
+            div
+              button.btn.btn-danger(onClick='stopTap()') stop tap
 
 
-        .row-justify-content-center
-        div
-          h2(id='current_tap_status') Not running
+
+
 
 
   script.
@@ -101,6 +106,7 @@ block content
 
 
     function testApiConnection(){
+        document.getElementById('connection_status').innerHTML = "checking..."
         socket.emit('testApiConnection');
     }
 
@@ -121,18 +127,21 @@ block content
 
 
 
-    socket.on('datetime', function(sys_time) {document.getElementById('sys_time').innerHTML = sys_time;});
+    socket.on('datetime', function(sys_time) {document.getElementById('sys_time').innerHTML = sys_time});
 
-    socket.on('cpu_usage', function(cpu_data) {document.getElementById('cpu_usage').innerHTML = cpu_data;});
+    socket.on('cpu_usage', function(cpu_data) {document.getElementById('cpu_usage').innerHTML = cpu_data});
 
     socket.on('filesys', function(sd_data) {document.getElementById('sd_usage').innerHTML = sd_data});
 
-    socket.on('ram_usage', function(ram_data) {document.getElementById('ram_usage').innerHTML = ram_data;});
+    socket.on('ram_usage', function(ram_data) {document.getElementById('ram_usage').innerHTML = ram_data});
+
+    socket.on('cpu_temp', function(cpu_temp) {document.getElementById('cpu_temp').innerHTML = cpu_temp});
+
     
 
     socket.on('connection_status', function(connection_status) {
       if(connection_status.success === false){
-        document.getElementById('connection_status').innerHTML = "<span class='offlineText'>API connection error: "+connection_status.message+"</span>"
+        document.getElementById('connection_status').innerHTML = "<span class='offlineText'>"+connection_status.message.message+"</span>"
       }else{
         document.getElementById('connection_status').innerHTML = "<span class='onlineText'>API connected</span>"
       }
@@ -147,23 +156,7 @@ block content
           if(Object.keys(nic_data[nic]).length === 0){
             document.getElementById(nic).innerHTML = "<small class='offlineText'>offline</small>";
           }else{
-
-            for(let key in nic_data[nic]){
-
-
-            let node = document.createElement("LI");
-
-            let textnode = document.createTextNode(nic_data[nic][key]);
-            node.appendChild(textnode);   
-            
-            document.getElementById(nic).appendChild(node);
-              
+            document.getElementById(nic).innerHTML = "<small class='onlineText'>online</small>";              
             }
-
           }
-
-
-      }
-
-      
       });

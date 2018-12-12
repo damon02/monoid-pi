@@ -1,6 +1,6 @@
 const fs = require('fs');
 var shelljs = require('shelljs');
-var request = require('request');
+var rp = require('request-promise');
 
 
 let startTap = function(){
@@ -76,7 +76,8 @@ let testConnection = function(){
 
     let token = JSON.parse(fs.readFileSync('../myapp/storage/config.json', 'utf8')).user.api_token;
 
-    request({
+        console.log('yeh boi')
+        rp({
         url: "https://api.monoidinc.nl/data/store-packets",
         method: "POST",
         headers : {
@@ -84,18 +85,12 @@ let testConnection = function(){
         },
         json: true,   // <--Very important!!!
         body: {"test":"test"}
-    }, function (error, response, body){
-        if(!error){
-            return resolve(body)
-        }else{
-            return reject(error)
-        }
-    });
-
+    }).then(body =>{
+        return resolve(body)
+    }).catch(err =>{
+        return reject(err)
     })
-
-
-    
+    })
 }
 
 
