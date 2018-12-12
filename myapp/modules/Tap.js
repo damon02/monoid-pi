@@ -11,7 +11,7 @@ let startTap = function(){
     if(shelljs.which('w')){
 
         //check of de startScript ook wel echt runt
-        shelljs.exec('/home/monoid_dev/raspberry-pi/tap/startScript.sh')
+        shelljs.exec('/home/monoid_dev/raspberry-pi/tap/startScript.sh',{silent:true})
         return resolve("Tap is Running")
     }else{
         return resolve("Can't run on Windows")
@@ -42,7 +42,7 @@ let isRunning = function(){
     return new Promise(function (resolve, reject) {
 
     if(shelljs.which('w')){
-        shelljs.exec('/home/monoid_dev/raspberry-pi/tap/isRunning.sh')
+        shelljs.exec('/home/monoid_dev/raspberry-pi/tap/isRunning.sh',{silent:true})
     }else{
         return "windows"
     }
@@ -75,8 +75,6 @@ let testConnection = function(){
     return new Promise(function (resolve, reject) {
 
     let token = JSON.parse(fs.readFileSync('../myapp/storage/config.json', 'utf8')).user.api_token;
-
-        console.log('yeh boi')
         rp({
         url: "https://api.monoidinc.nl/data/store-packets",
         method: "POST",

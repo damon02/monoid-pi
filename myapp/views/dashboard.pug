@@ -43,24 +43,24 @@ block content
             hr
             .row
               .col
-                h4 CPU
+                h4 CPU usage
                 div
                   h2(style="display: inline-block" id='cpu_usage') -
                   h4(style="display: inline-block") %
               .col
-                h4 TEMP
+                h4 CPU temp
                 div
                   h2(style="display: inline-block" id='cpu_temp') -
                   h4(style="display: inline-block") &#8451;
             hr
             .row
               .col
-                h4 SD
+                h4 SD usage
                   div
                     h2(style="display: inline-block" id='sd_usage') -
                     h4(style="display: inline-block") %
               .col
-                h4 RAM
+                h4 RAM usage
                 div
                   h2(style="display: inline-block" id='ram_usage') -
                   h4(style="display: inline-block") %
@@ -141,7 +141,11 @@ block content
 
     socket.on('connection_status', function(connection_status) {
       if(connection_status.success === false){
+        if(connection_status.message.message){
         document.getElementById('connection_status').innerHTML = "<span class='offlineText'>"+connection_status.message.message+"</span>"
+        }else{
+            document.getElementById('connection_status').innerHTML = "<span class='offlineText'>"+connection_status.message+"</span>"
+        }
       }else{
         document.getElementById('connection_status').innerHTML = "<span class='onlineText'>API connected</span>"
       }

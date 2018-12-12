@@ -14,17 +14,16 @@ let getSystemData = async function(){
 
     if(shelljs.which('w')){
 
-    if(shelljs.test('-e','cat /sys/class/net/eth0/statistics/rx_bytes')){
+    if(shelljs.test('-e','/sys/class/net/eth0/statistics/rx_bytes',{silent: true})){
         mon_nic =  {'online':true}
     }
 
-    if(shelljs.test('-e','/sys/class/net/br0/statistics/rx_bytes')){
-    shelljs.exec("cat /sys/class/net/br0/statistics/rx_bytes")
+    if(shelljs.test('-e','/sys/class/net/br0/statistics/rx_bytes',{silent: true})){
         br_nic = {'online':true}
 
     }
 
-    let ram_usage = shelljs.exec("free -m | awk '/Mem:/ { print $3 } '") /shelljs.exec("free -m | awk '/Mem:/ { print $2 } '") * 100
+    let ram_usage = shelljs.exec("free -m | awk '/Mem:/ { print $3 } '",{silent: true}) /shelljs.exec("free -m | awk '/Mem:/ { print $2 } '",{silent: true}) * 100
 	let file_usage = shelljs.exec("df -h | grep /dev/root | awk '{ print $5 }'",{silent: true})
     let cpu_usage = shelljs.exec("grep 'cpu ' /proc/stat | awk '{usage=($2+$4)*100 / ($2+$4+$5)} END {print usage}'",{silent: true})
 
@@ -35,7 +34,7 @@ let getSystemData = async function(){
             'ram_usage': Math.round(ram_usage),
             'filesys': file_usage.substr(0, file_usage.length -2),
             'cpu_usage': Math.round(cpu_usage),
-            'cpu_temp': cpu_temp,
+            'cpu_temp': Math.round(cpu_temp),
             'nic': {'mon_nic':mon_nic, 'br_nic':br_nic}
         }
     }else{
