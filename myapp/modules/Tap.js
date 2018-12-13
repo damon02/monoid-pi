@@ -7,11 +7,15 @@ let startTap = function(){
 
     return new Promise(function (resolve, reject) {
 
+    console.log('I shoud start Tap')
+
+
+
     //run script
     if(shelljs.which('w')){
 
         //check of de startScript ook wel echt runt
-        shelljs.exec('/home/monoid_dev/raspberry-pi/tap/startScript.sh',{silent:true})
+        shelljs.exec("sh /home/monoid_dev/raspberry-pi/tap/startScript.sh",{silent: true})
         return resolve("Tap is Running")
     }else{
         return resolve("Can't run on Windows")
@@ -26,7 +30,7 @@ let stopTap = function(){
 
     if(shelljs.which('w')){
 
-    shelljs.exec('/home/monoid_dev/raspberry-pi/tap/stopScript.sh')
+    shelljs.exec('sh /home/monoid_dev/raspberry-pi/tap/stopScript.sh')
     return resolve("Tap Stoped")
     }else{
         return resolve("Can't run on Windows")

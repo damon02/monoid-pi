@@ -27,20 +27,20 @@ app.use(expressValidator())
 app.use(helmet.noCache())
 app.use(helmet());
 
-/**
- * Rate limit all requests
- */
-var limiter = new rateLimit({
-  windowMs: 60*1000, // How long is the timespan?
-  delayAfter: 0, //begin slowing down responses after the first request
-  delayMs: 0, //slow down subsequent responses by 3 seconds per request
-  max: 5000, //start blocking after 5 requests
-  message:"Too many request, try again in {minutes} minutes",
-headers:true//show header stats with attemts remaining
-});
+// /**
+//  * Rate limit all requests
+//  */
+// var limiter = new rateLimit({
+//   windowMs: 60*1000, // How long is the timespan?
+//   delayAfter: 0, //begin slowing down responses after the first request
+//   delayMs: 0, //slow down subsequent responses by 3 seconds per request
+//   max: 5000, //start blocking after 5 requests
+//   message:"Too many request, try again in {minutes} minutes",
+// headers:true//show header stats with attemts remaining
+// });
 
-//  apply to all requests
-app.use(limiter);
+// //  apply to all requests
+// app.use(limiter);
 
 
 //remove server header

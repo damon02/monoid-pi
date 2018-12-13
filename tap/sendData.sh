@@ -2,6 +2,9 @@
 
 FILE_PATH="/home/monoid_dev/raspberry-pi/tap/outputFiles/"
 
+FILE_PATH_TEST="/home/monoid_dev/raspberry-pi/"
+
+
 
 #API_HOST_TEST="http://192.168.1.235:3000"
 
@@ -13,7 +16,7 @@ inotifywait -m $FILE_PATH -e create -e moved_to |
         while read path action file; do
 
                 #USER INPUT, VERY DANGEROUS!
-                API_TOKEN=$(cat ../myapp/storage/config.json | jq -r ".user.api_token")
+                API_TOKEN=$(cat /home/monoid_dev/raspberry-pi/myapp/storage/config.json | jq -r ".user.api_token")
                 #USER INPUT END
 
                 #echo "The file '$file' appeared in the dir '$path' via '$action'"
