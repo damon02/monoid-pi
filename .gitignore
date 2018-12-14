@@ -5,5 +5,4 @@ npm-debug.log
 .DS_Store
 .vscode
 
-tap/outputFiles
 tap/tmp.json

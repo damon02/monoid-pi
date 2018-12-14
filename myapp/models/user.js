@@ -87,7 +87,7 @@ let updateUser = function(items_to_update){
             if(InputValidator.customOr(items_to_update[key], custom_rules)){
                 storage.user[key] = items_to_update[key]
             }else{
-                return reject("weird characters used in "+ items_to_update[key])
+                return reject("illegal characters used in "+ items_to_update[key])
             }
         }
     }
@@ -104,14 +104,20 @@ let writeToConfig = function(new_storage){
 let setLastLogin = function(){
     var storage = JSON.parse(fs.readFileSync('../myapp/storage/config.json', 'utf8'));
 
-    storage.user.last_logged_in = Date.now();
+    storage.user.last_logged_in = new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '');
 
     fs.writeFileSync('../myapp/storage/config.json',JSON.stringify(storage,null,2),'utf8')
+}
+
+let hasChangedPassword = function(){
+    return JSON.parse(fs.readFileSync('../myapp/storage/config.json', 'utf8')).user.hasChangedPassword;
+
 }
 
 module.exports = {
     authenticate,
     updateUser,
     getUserObject,
-    writeToConfig
+    writeToConfig,
+    hasChangedPassword
 }

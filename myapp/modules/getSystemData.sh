@@ -1,7 +1,7 @@
 mon_nic_status="$(cat /sys/class/net/eth0/operstate)"
 br_nic_status="$(cat /sys/class/net/br0/operstate)"
 
-cpu_temp="$(grep 'cpu ' /proc/stat | awk '{usage=($2+$4)*100 / ($2+$4+$5)} END {print usage}')"
+cpu_temp="$(cat /sys/class/thermal/thermal_zone0/temp)"
 cpu_usage="$(grep 'cpu ' /proc/stat | awk '{usage=($2+$4)*100 / ($2+$4+$5)} END {print usage}')"
 file_usage="$(df -h | grep /dev/root | awk '{ print $5 }')"
 #not sure if bash can handle / and *

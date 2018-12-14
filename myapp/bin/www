@@ -32,8 +32,8 @@ io.sockets.on('connection', function (socket) {
 
   socket.on('stopTap', function(){
   
-    Tap.stopTap().then(result =>{
-      socket.emit('tap_status_change',result)
+    Tap.stopTap().then(response =>{
+      socket.emit('tap_status',response)
     })
   
   })
@@ -52,24 +52,31 @@ socket.on('testApiConnection', function(){
 
 
   socket.on('startTap', function(){
-    Tap.testConnection().then(reponse =>{
-      if(reponse.success !== false){
+    Tap.testConnection().then(response =>{
+      if(response.success){
         Tap.startTap().then(result =>{
-          socket.emit('tap_status_change',result)
+          socket.emit('tap_status',result)
         })
       }else{
-        socket.emit('tap_status_change','could not connect to API')
+        socket.emit('tap_status',{success:false, current_status:"Tap not running", msg:'could not connect to API'})
       }
   }).catch(err =>{
-    socket.emit('tap_status_change','could not connect to API')
+    socket.emit('tap_status',{success:false, current_status:"Tap not running", msg:'could not connect to API'})
   })
 })
+
 
   Tap.testConnection().then(connection_status =>{
 
     socket.emit('connection_status',connection_status)
+
   }).catch(err =>{
-    socket.emit('connection_status',{success:false,message:err})
+    socket.emit('connection_status',{success:false,message:'Network error'})
+  })
+
+  Tap.isRunning().then(response =>{
+
+    socket.emit('tap_status',response)
   })
 
 
@@ -80,6 +87,8 @@ socket.on('testApiConnection', function(){
       for(let key in systemData){
         socket.emit(key, systemData[key])
       }
+  }).catch( err =>{
+    console.log(err)
   })
   
 }, 1000); 

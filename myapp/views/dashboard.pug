@@ -3,37 +3,52 @@ extends layout
 
 block content
   container
-    nav(class='navbar fixed-top navbar-dark bg-dark')
-      span(class='navbar-brand mb-0 h1') Dashboard
+    nav(class='navbar fixed-top bg-light')
+      span(class='navbar-brand mb-0 h1') Monoid  
+      span(class='navbar-text navbar-center') <strong style='color:white'>This application is still a prototype, please treat it as such</strong>
       span(class="navbar-text navbar-right") signed in as #{username}
-    br
+  br
   container
     .row
-      .col-2
+      .col-4
         h2 User
+        h4 Username
         form(method='POST' action='/updateUsername')
-          div.form-group
+          <div class="input-group mb-3">
             input.form-control(type='text' id='username' placeholder='username' value=username name='username' required autocomplete="off")
-            button.btn.btn-primary(type='submit') update username
+            //- <input type="text" class="form-control" placeholder="Recipient's username" aria-label="Recipient's username" aria-describedby="basic-addon2">
+            <div class="input-group-append">
+              button.btn.btn-primary(type='submit') update
+            </div>
+          </div>
+        br
+        h4 API token
         form(method='POST' action='/updateApiToken')
-          div.form-group
+          <div class="input-group mb-3">
             input.form-control(type='text' id='apiToken' placeholder='API token' value=token name='apiToken' required autocomplete="off")        
-            button.btn.btn-primary(type='submit') update api token
+            //- <input type="text" class="form-control" placeholder="Recipient's username" aria-label="Recipient's username" aria-describedby="basic-addon2">
+            <div class="input-group-append">
+              button.btn.btn-primary(type='submit') update
+            </div>
+          </div>
+        h4 Password
         form(method='POST' action='/updatePassword')
           div.form-group
             input.form-control(type='password' id='password' placeholder='Current password' name='password' required autocomplete="off")
           div.form-group
             input.form-control(type='password' id='password_new' placeholder='New password' name='password_new' required autocomplete="off")
-            small(class="form-text text-muted") The password must be at least 10 characters long.
-            small(class="form-text text-muted") The password must contain at least one uppercase letter.
-            small(class="form-text text-muted") The password must contain at least one number.
-            small(class="form-text text-muted") The password must contain at least one special character.
+            small(class="form-text text-muted") The password must:
+             ul
+              li be at least 10 characters long.
+              li contain at least one uppercase letter.
+              li contain at least one number.
+              li contain at least one special character.
           div.form-group
             input.form-control(type='password' id='password_new_verify' placeholder='Verify new password' name='password_new_verify' required autocomplete="off")
 
-            button.btn.btn-primary(type='submit') Change password
+          button.btn.btn-primary(type='submit') Submit
 
-      .col-4
+      .col.meme.col-4
         h2 System
         .row-justify-content-center
           h4 Time
@@ -65,35 +80,43 @@ block content
                   h2(style="display: inline-block" id='ram_usage') -
                   h4(style="display: inline-block") %
             hr
-            .row-justify-content-center
-              h3 Network
-                div
-                  h4= "monitor"
-                  div(id='mon_nic')
+            .row
+              .col
+                h4= "Network Monitor"
+                .row-justify-content-center
+                  div(style="display: inline-block" id='mon_nic')
+              .col
+                h4="Network Bridge"
+                .row-justify-content-center
+                  div(style="display: inline-block" id='br_nic')
+              hr
 
-                hr
-                div
-                  h4= "bridge"
-                  div(id='br_nic')
-
-      .col
+      .col.meme
         h2 Status
+        br
+        br
 
         .row-justify-content-center
           h4 API
-          div
-            div(id='connection_status' class="btn btn-dark disabled" style="cursor:default")
-              span(id='connection_status') not tested
-          button.btn.btn-default(onClick='testApiConnection()') ⇄
+          button.btn.btn-lg.btn-block.btn-info(onClick='testApiConnection()') ⇄
+          div(id='connection_status')
+            button.btn.btn-lg.btn-block.btn-outline-dark( style="cursor:default") not tested
+
+          <small id='connection_status_msg'class="form-text text-muted")></small>
+        br
         br
         .row-justify-content-center
           h4 Tap
+          div(id="start_stop")
+            button.btn.btn-warning.btn-lg.btn-block(disabled=true id='start_stop_btn') Checking...
+          //- button.btn.btn-danger.btn-lg.btn-block(disabled=false id='stop_tap' onClick='stopTap()') STOP
           div
-            div(class="btn btn-dark disabled" style="cursor:default")
-              span(id='current_tap_status') not running
-          button.btn.btn-success(disabled=true id='start_tap') ▷
-          button.btn.btn-danger(id='stop_tap' onClick='stopTap()') X
+            div(id='current_tap_status') 
+              button.btn.btn-lg.btn-block.btn-outline-dark( style="cursor:default") ...
+            
+            <small id='current_tap_status_msg'class="form-text text-muted"></small> 
         br
+
 
 
 
@@ -105,32 +128,47 @@ block content
 
 
     function testApiConnection(){
-        document.getElementById('connection_status').innerHTML = "checking..."
+        document.getElementById('connection_status').innerHTML = '<div class="btn btn-lg btn-block btn-outline-warning disabled" style="cursor:default">Checking..</div>'
+        document.getElementById('start_stop_btn').disabled = true
         socket.emit('testApiConnection');
     }
 
-
     function startTap(){
+        document.getElementById('start_stop').innerHTML = '<div class="btn btn-warning btn-lg btn-block disabled"  style="cursor:default">starting tap...</div>'
+        document.getElementById('current_tap_status').innerHTML = '<div class="btn btn-lg btn-block btn-outline-dark disabled" style="cursor:default">...</div>'
 
         socket.emit('startTap');
     }
 
     function stopTap(){
+        document.getElementById('start_stop').innerHTML = '<div class="btn btn-warning btn-lg btn-block disabled"  style="cursor:default">stopping tap...</div>'
+        document.getElementById('current_tap_status').innerHTML = '<div class="btn btn-lg btn-block btn-outline-dark disabled" style="cursor:default">...</div>'
         socket.emit('stopTap');
     }
 
-    socket.on('tap_status_change', function(status){
+    socket.on('tap_status', function(status){
 
-      document.getElementById('current_tap_status').innerHTML = status
-    })
+      if(status.isRunning){
+          document.getElementById('start_stop').innerHTML = '<button id="start_stop_btn" class="btn btn-danger btn-lg btn-block"  onclick=stopTap() style="cursor:default">STOP</button>'
 
+      }else{
+          document.getElementById('start_stop').innerHTML = '<button id="start_stop_btn" class="btn btn-success btn-lg btn-block" onclick=startTap() style="cursor:default">START</button>'
+      }
+
+      if(status.success){
+          document.getElementById('current_tap_status').innerHTML = '<div class="btn btn-lg btn-block btn-outline-dark disabled" style="cursor:default">'+status.current_status+'</div>'
+      }
+
+      document.getElementById('current_tap_status_msg').innerHTML = status.msg
+
+    });
 
 
     socket.on('datetime', function(sys_time) {document.getElementById('sys_time').innerHTML = sys_time});
 
     socket.on('cpu_usage', function(cpu_data) {document.getElementById('cpu_usage').innerHTML = cpu_data});
 
-    socket.on('filesys', function(sd_data) {document.getElementById('sd_usage').innerHTML = sd_data});
+    socket.on('file_usage', function(sd_data) {document.getElementById('sd_usage').innerHTML = sd_data});
 
     socket.on('ram_usage', function(ram_data) {document.getElementById('ram_usage').innerHTML = ram_data});
 
@@ -140,16 +178,13 @@ block content
 
     socket.on('connection_status', function(connection_status) {
       if(connection_status.success === false){
-        if(connection_status.message.message){
-        document.getElementById('connection_status').innerHTML = "<span class='offlineText'>"+connection_status.message.message+"</span>"
-        }else{
-            document.getElementById('connection_status').innerHTML = "<span class='offlineText'>"+connection_status.message+"</span>"
-        }
+        document.getElementById('start_stop_btn').disabled = true
+        document.getElementById('connection_status').innerHTML = '<div class="btn btn-lg btn-block btn-outline-danger disabled" style="cursor:default">not connected</div>'
+        document.getElementById('connection_status_msg').innerHTML = connection_status.message
       }else{
-        document.getElementById('start_tap').disabled = false
-        document.getElementById('start_tap').onclick = function() {startTap()};
-
-        document.getElementById('connection_status').innerHTML = "<span class='onlineText'>API connected</span>"
+        document.getElementById('start_stop_btn').disabled = false
+        document.getElementById('connection_status_msg').innerHTML = ""
+        document.getElementById('connection_status').innerHTML = '<div class="btn btn-lg btn-block btn-outline-success disabled" style="cursor:default">Connected</div>'
       }
       
       
@@ -161,9 +196,9 @@ block content
       for(let nic in nic_data){
           let status = nic_data[nic].status
           if(status.includes('up')){
-            document.getElementById(nic).innerHTML = '<div class="btn btn-success disabled" style="cursor:default;">'+status+'</div>'
+            document.getElementById(nic).innerHTML = '<div class="btn btn-outline-success disabled" style="cursor:default;">'+status+'</div>'
           }else{
-            document.getElementById(nic).innerHTML = '<div class="btn btn-danger disabled" style="cursor:default;">'+status+'</div>'
+            document.getElementById(nic).innerHTML = '<div class="btn btn-outline-danger disabled" style="cursor:default;">'+status+'</div>'
             }
           }
       });

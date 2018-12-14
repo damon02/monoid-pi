@@ -7,36 +7,45 @@ let startTap = function(){
 
     return new Promise(function (resolve, reject) {
 
-    console.log('I shoud start Tap')
-
-
-
     //run script
     if(shelljs.which('w')){
 
         //check of de startScript ook wel echt runt
         shelljs.exec("sh /home/monoid_dev/raspberry-pi/tap/startScript.sh",{silent: true})
-        return resolve("Tap is Running")
+
+
+        /*
+
+        add aditional checks to see if the tap is actually running!
+
+        */
+        return resolve({success:true,isRunning:true,current_status:"Tap is running", msg: ""})
     }else{
-        return resolve("Can't run on Windows")
+        return resolve({success:true, isRunning:true, current_status:"Tap is running", msg: "Cannot run on windows"})
     }
 })
     //verify that it is running correctly
 }
 
+//status.current_status
+//status.msg
+//status.isRunning
 
-let stopTap = function(){
+let stopTap = function(msg){
     return new Promise(function (resolve, reject) {
 
     if(shelljs.which('w')){
 
     shelljs.exec('sh /home/monoid_dev/raspberry-pi/tap/stopScript.sh')
-    return resolve("Tap Stoped")
+
+        //verify that it stopped correctly
+
+
+        return resolve({success: true,isRunning:false, current_status:"Tap not running"})
     }else{
-        return resolve("Can't run on Windows")
-}
-    })
-    //verify that it stopped correctly
+        return resolve({success:true, isRunning:false, current_status:"Tap not running", msg: "Cannot run on windows"})
+    }
+})
 
 }
 
@@ -47,8 +56,17 @@ let isRunning = function(){
 
     if(shelljs.which('w')){
         shelljs.exec('/home/monoid_dev/raspberry-pi/tap/isRunning.sh',{silent:true})
+
+
+        /*
+
+        Check hier of ie wel echt aan echt aan het running is
+        */
+
+
+        return resolve({success: true,isRunning:true, current_status:"Tap is running", msg:""})
     }else{
-        return "windows"
+        return resolve({success: true,isRunning:false, current_status:"Tap not running", msg:"Can't run on Windows"})
     }
 })
 

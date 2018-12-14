@@ -2,45 +2,41 @@
 const fs = require('fs');
 var shelljs = require('shelljs');
 
-date = new Date()
+let getSystemData = function(){
 
-let getSystemData = async function(){
 
-    let datetime = date.toISOString()
-    .replace(/T/, ' ')
-    .replace(/\..+/, '')
-
+    return new Promise(function (resolve, reject) {
 
     if(shelljs.which('w')){
 
+        let str = shelljs.exec('sh /home/monoid_dev/raspberry-pi/myapp/modules/getSystemData.sh',{silent:true}).stdout
 
-    let str = shelljs.exec('sh /home/monoid_dev/raspberry-pi/myapp/modules/getSystemData.sh',{silent:true}).stdout
-
-    let sys_data = JSON.parse(str).sys_data
-    sys_data.ram_usage = Math.round(sys_data.ram_usage_1/sys_data.ram_usage_2 * 100)
-
-    sys_data.cpu_usage = Math.round(sys_data.cpu_usage)
-    sys_data.cpu_temp = Math.round(sys_data.cpu_temp)
-    sys_data.file_usage = sys_data.filesys.substring(0, sys_data.filesys.length -1)
+        let sys_data = JSON.parse(str).sys_data
 
 
+        datetime.datetime = new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '')
 
+        sys_data.ram_usage = Math.round(sys_data.ram_usage_1/sys_data.ram_usage_2 * 100)
 
+        sys_data.cpu_usage = Math.round(sys_data.cpu_usage)
+        sys_data.cpu_temp = Math.round(sys_data.cpu_temp)
+        sys_data.file_usage = sys_data.file_usage.substring(0, sys_data.file_usage.length -1)
 
-     return sys_data
+        return resolve(sys_data)
 
     }else{
         //niet pi
-        return {
-            "datetime": datetime,
+        return resolve({
+            "datetime": new Date().toISOString().replace(/T/, ' ').replace(/\..+/, ''),
             'ram_usage': 'N/A',
-            'filesys': 'N/A',
+            'file_usage': 'N/A',
             'cpu_usage': 'N/A',
             'cpu_temp': 'N/A',
             'nic': {'mon_nic':{'status': 'not detected'}, 'br_nic':{'status': 'not detected'}}
-        }
-
+        })
     }
+})
+
 }
 
 

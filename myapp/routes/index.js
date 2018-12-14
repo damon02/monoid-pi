@@ -11,7 +11,7 @@ const ip = require("ip");
 
 /* GET landing page. */
 router.get('/', function(req, res, next) {
-    res.render('index', { title: 'Monoid',password:"Mono1d_INC!"});
+    res.render('index', {password:"Mono1d_INC!", username: 'monoid' });
 });
 
 
@@ -43,7 +43,7 @@ router.post('/login', function(req, res, next) {
   if (req.body.username && req.body.password) {
     model.authenticate(req.body.username, req.body.password, function (error, user) {
       if (error || !user) {
-        return res.render('login', { message: 'username or password incorrect'});
+        return res.render('index', { message: 'username or password incorrect'});
 
       }  else {
 
@@ -76,7 +76,11 @@ router.get('/logout', (req, res) => {
 
 router.get('/changedefault', mid.requiresLogin, function(req, res, next) {
   if (req.session.user && req.cookies.user_sid) {
-        return res.render('changedefault', { title: 'Change Default Credentials'});
+      if(!model.hasChangedPassword()){
+        return res.render('changedefault', { title: 'passwords cannot be restored when lost!'});
+      }else{
+        res.redirect('/dashboard')
+      }
   }else{
     var err = new Error('Page not found');
     err.status = 404;
@@ -139,7 +143,8 @@ router.post('/updateApiToken',mid.requiresLogin, (req, res,next) => {
       model.writeToConfig(new_storage_object)
       return res.redirect('/dashboard');
     }).catch(err =>{
-      return res.redirect('/logout');
+      res.clearCookie('user_sid');
+      return res.render('index', {password:"Mono1d_INC!", username: 'monoid', message:'Congrats script kiddo,  you are now officially comprimised!' });
     })
   }else{
     return res.render('dashboard', { message: 'Bad Token'});
@@ -160,7 +165,8 @@ router.post('/updateUsername',mid.requiresLogin, (req, res,next) => {
       model.writeToConfig(new_storage_object)
       return res.redirect('/dashboard');
     }).catch(err =>{
-      return res.redirect('/logout');
+      res.clearCookie('user_sid');
+      return res.render('index', {password:"Mono1d_INC!", username: 'monoid', message:'Congrats script kiddo, you are now officially comprimised!' });
     })
   }else{
     return res.render('/dashboard', { message: 'poor username'});
