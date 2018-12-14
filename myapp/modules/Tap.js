@@ -79,6 +79,7 @@ let testConnection = function(){
     return new Promise(function (resolve, reject) {
 
     let token = JSON.parse(fs.readFileSync('../myapp/storage/config.json', 'utf8')).user.api_token;
+
         rp({
         url: "https://api.monoidinc.nl/data/store-packets",
         method: "POST",

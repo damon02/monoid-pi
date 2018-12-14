@@ -2,9 +2,11 @@
 const fs = require('fs');
 var shelljs = require('shelljs');
 
+date = new Date()
+
 let getSystemData = async function(){
 
-    let datetime = new Date().toISOString()
+    let datetime = date.toISOString()
     .replace(/T/, ' ')
     .replace(/\..+/, '')
 
@@ -12,14 +14,20 @@ let getSystemData = async function(){
     let br_nic = {'status': 'not detected'}
 
 
+
+    //System data uit getSystemData.sh halen met sys_data = shelljs.exec(echo sys_data | jq)
+    //test of getSystemData.sh wel werkt op de pi
+    //
+
+
     if(shelljs.which('w')){
 
     if(shelljs.test('-e','/sys/class/net/eth0/operstate',{silent: true})){
-        mon_nic =  {'status':shelljs.cat('/sys/class/net/br0/operstate',{silent: true})}
+        mon_nic =  {'status':shelljs.exec('cat /sys/class/net/eth0/operstate',{silent: true})}
     }
 
     if(shelljs.test('-e','/sys/class/net/br0/operstate',{silent: true})){
-        br_nic = {'status':shelljs.cat('/sys/class/net/br0/operstate',{silent: true})}
+        br_nic = {'status':shelljs.exec('cat /sys/class/net/br0/operstate',{silent: true})}
 
     }
 

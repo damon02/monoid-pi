@@ -204,24 +204,24 @@ router.post('/updatePassword', mid.requiresLogin, (req, res,next) => {
   
 }) 
 
-router.post('/startTap',mid.requiresLogin, (req, res,next) => {
-  if (req.session.user && req.cookies.user_sid) {
+// router.post('/startTap',mid.requiresLogin, (req, res,next) => {
+//   if (req.session.user && req.cookies.user_sid) {
 
 
-    Tap.startTap().then(response =>{
+//     Tap.startTap().then(response =>{
 
-      return response
+//       return response
       
-    })
+//     })
 
 
 
-  }else {
-    err.status = 404;
-    return next(err);
-}
+//   }else {
+//     err.status = 404;
+//     return next(err);
+// }
 
-}) 
+// }) 
 
 
 // router.post('/stopTap',mid.requiresLogin, (req, res,next) => {

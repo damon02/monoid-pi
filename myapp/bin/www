@@ -52,11 +52,18 @@ socket.on('testApiConnection', function(){
 
 
   socket.on('startTap', function(){
-    Tap.startTap().then(result =>{
-      socket.emit('tap_status_change',result)
-    })
-  
+    Tap.testConnection().then(reponse =>{
+      if(reponse.success !== false){
+        Tap.startTap().then(result =>{
+          socket.emit('tap_status_change',result)
+        })
+      }else{
+        socket.emit('tap_status_change','could not connect to API')
+      }
+  }).catch(err =>{
+    socket.emit('tap_status_change','could not connect to API')
   })
+})
 
   Tap.testConnection().then(connection_status =>{
 
