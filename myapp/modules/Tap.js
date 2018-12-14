@@ -87,7 +87,7 @@ let testConnection = function(){
             "Authorization" : token
         },
         json: true,   // <--Very important!!!
-        body: {"test":"test"}
+        body: {}
     }).then(body =>{
         return resolve(body)
     }).catch(err =>{
