@@ -33,4 +33,4 @@ if [[ $RESPONSE == true ]];
 
 
 
-echo {\"br0\": \"$(checkBr0)\" \"eth0\" :  \"$(checkEth0)\" \"api\" : \"$(checkAPI)\"} > status.json
+echo {\"br0\": \"$(checkBr0)\", \"eth0\" :  \"$(checkEth0)\", \"api\" : \"$(checkAPI)\"} > /home/monoid_dev/raspberry-pi/tap/status.json
