@@ -6,7 +6,7 @@
 
 if pgrep -x "startScript.sh" > /dev/null
 then
-    echo "Running"
+    echo true
 else
-    echo "Stopped"
+    echo false
 fi

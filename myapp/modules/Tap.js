@@ -25,12 +25,15 @@ let startTap = function(){
         shelljs.exec("sh /home/monoid_dev/raspberry-pi/tap/startScript.sh")
 
 
-        /*
+        isRunning.then(response =>{
 
-        add aditional checks to see if the tap is actually running!
+            if(response.isRunning){
+                return resolve({success: true, isRunning:true, current_status:"Tap is running", msg:""})
+            }else{
+                return resolve({success: false, isRunning:false, current_status:"Tap is not running", msg:"Could not start tap!"})
+            }
 
-        */
-        return resolve({success:true,isRunning:true,current_status:"Tap is running", msg: ""})
+        })
     }else{
         return resolve({success:true, isRunning:true, current_status:"Tap is running", msg: "Cannot run on windows"})
     }
@@ -49,10 +52,18 @@ let stopTap = function(msg){
 
     shelljs.exec('sh /home/monoid_dev/raspberry-pi/tap/stopScript.sh')
 
+        isRunning.then(response =>{
+
+            if(response.isRunning){
+                return resolve({success: false,isRunning:true, current_status:"Tap is running", msg:"could not stop tap!"})
+            }else{
+                return resolve({success: true,isRunning:false, current_status:"Tap not running", msg:""})
+            }
+
+        })
+
         //verify that it stopped correctly
 
-
-        return resolve({success: true,isRunning:false, current_status:"Tap not running", msg:""})
     }else{
         return resolve({success:true, isRunning:false, current_status:"Tap not running", msg: "Cannot run on windows"})
     }
@@ -60,22 +71,20 @@ let stopTap = function(msg){
 
 }
 
-//TODO
 let isRunning = function(){
 
     return new Promise(function (resolve, reject) {
 
     if(shelljs.which('w')){
-        shelljs.exec('/home/monoid_dev/raspberry-pi/tap/isRunning.sh',{silent:true})
+        x = shelljs.exec('sh /home/monoid_dev/raspberry-pi/tap/isRunning.sh').stdout
 
+        
+        if(x.includes('true')){
+            return resolve({success: true,isRunning:true, current_status:"Tap is running", msg:""})
+        }else{
+            return resolve({success: true,isRunning:false, current_status:"Tap not running", msg:""})
+        }
 
-        /*
-
-        Check hier of ie wel echt aan echt aan het running is
-        */
-
-
-        return resolve({success: true,isRunning:true, current_status:"Tap is running", msg:""})
     }else{
         return resolve({success: true,isRunning:false, current_status:"Tap not running", msg:"Can't run on Windows"})
     }

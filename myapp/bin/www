@@ -30,6 +30,11 @@ var io = require('socket.io')(server)
 
 io.sockets.on('connection', function (socket) {
 
+
+  Tap.isRunning().then(response =>{
+    socket.emit('tap_status',response)
+  })
+
   socket.on('stopTap', function(){
   
     Tap.stopTap().then(response =>{
