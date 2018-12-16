@@ -11,6 +11,10 @@ a {
   text-align: center;
 }
 
+.sys-info{
+  display: inline-block;
+  color:#00bc8c
+}
 
 .offlineText{
   color: rgb(255, 0, 0);

@@ -11,7 +11,18 @@ let startTap = function(){
     if(shelljs.which('w')){
 
         //check of de startScript ook wel echt runt
-        shelljs.exec("sh /home/monoid_dev/raspberry-pi/tap/startScript.sh",{silent: true})
+
+        shelljs.exec("bash /home/monoid_dev/raspberry-pi/tap/test.sh")
+
+        var obj = JSON.parse(fs.readFileSync('/home/monoid_dev/raspberry-pi/tap/status.json', 'utf8'));
+
+        for(let key in obj){
+            if(obj[key] == "down"){
+                return resolve({success:false,isRunning:false,current_status:"Could not start tap", msg: key +" is down"})
+            }
+        }
+
+        shelljs.exec("sh /home/monoid_dev/raspberry-pi/tap/startScript.sh")
 
 
         /*
@@ -41,7 +52,7 @@ let stopTap = function(msg){
         //verify that it stopped correctly
 
 
-        return resolve({success: true,isRunning:false, current_status:"Tap not running"})
+        return resolve({success: true,isRunning:false, current_status:"Tap not running", msg:""})
     }else{
         return resolve({success:true, isRunning:false, current_status:"Tap not running", msg: "Cannot run on windows"})
     }

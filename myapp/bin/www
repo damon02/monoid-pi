@@ -33,6 +33,7 @@ io.sockets.on('connection', function (socket) {
   socket.on('stopTap', function(){
   
     Tap.stopTap().then(response =>{
+      response.msg="user stopped the tap"
       socket.emit('tap_status',response)
     })
   
@@ -55,6 +56,7 @@ socket.on('testApiConnection', function(){
     Tap.testConnection().then(response =>{
       if(response.success){
         Tap.startTap().then(result =>{
+          
           socket.emit('tap_status',result)
         })
       }else{

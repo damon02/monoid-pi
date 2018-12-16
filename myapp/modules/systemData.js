@@ -14,11 +14,11 @@ let getSystemData = function(){
         let sys_data = JSON.parse(str).sys_data
 
 
-        datetime.datetime = new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '')
+        sys_data.datetime = new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '')
 
         sys_data.ram_usage = Math.round(sys_data.ram_usage_1/sys_data.ram_usage_2 * 100)
 
-        sys_data.cpu_usage = Math.round(sys_data.cpu_usage)
+        sys_data.cpu_usage = Math.round(sys_data.cpu_usage/1000)
         sys_data.cpu_temp = Math.round(sys_data.cpu_temp)
         sys_data.file_usage = sys_data.file_usage.substring(0, sys_data.file_usage.length -1)
 
