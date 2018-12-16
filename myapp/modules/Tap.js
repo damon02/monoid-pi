@@ -25,7 +25,7 @@ let startTap = function(){
         let startScript = shelljs.exec("sh /home/monoid_dev/raspberry-pi/tap/startScript.sh",{async:true})
 
         startScript.stdout.on('data', data =>{
-            isRunning.then(response =>{
+            isRunning().then(response =>{
                 if(response.isRunning){
                     return resolve({success: true, isRunning:true, current_status:"Tap is running", msg:""})
                 }else{
@@ -55,7 +55,7 @@ let stopTap = function(msg){
 
     shelljs.exec('sh /home/monoid_dev/raspberry-pi/tap/stopScript.sh')
 
-        isRunning.then(response =>{
+        isRunning().then(response =>{
 
             if(response.isRunning){
                 return resolve({success: false,isRunning:true, current_status:"Tap is running", msg:"could not stop tap!"})
