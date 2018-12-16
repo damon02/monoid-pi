@@ -113,6 +113,7 @@ block content
           div
             div(id='current_tap_status') 
               button.btn.btn-lg.btn-block.btn-outline-dark( style="cursor:default")
+ 
             
             <small id='current_tap_status_msg'class="form-text text-muted"></small> 
         br
@@ -135,14 +136,14 @@ block content
 
     function startTap(){
         document.getElementById('start_stop').innerHTML = '<div class="btn btn-warning btn-lg btn-block disabled"  style="cursor:default">starting tap...</div>'
-        document.getElementById('current_tap_status').innerHTML = '<div class="btn btn-lg btn-block btn-outline-dark disabled" style="cursor:default"></div>'
+        document.getElementById('current_tap_status').innerHTML = '<div class="btn btn-lg btn-block btn-outline-dark disabled" style="cursor:default">Loading</div>'
 
         socket.emit('startTap');
     }
 
     function stopTap(){
         document.getElementById('start_stop').innerHTML = '<div class="btn btn-warning btn-lg btn-block disabled"  style="cursor:default">stopping tap...</div>'
-        document.getElementById('current_tap_status').innerHTML = '<div class="btn btn-lg btn-block btn-outline-dark disabled" style="cursor:default"></div>'
+        document.getElementById('current_tap_status').innerHTML = '<div class="btn btn-lg btn-block btn-outline-dark disabled" style="cursor:default">Loading</div>'
         socket.emit('stopTap');
     }
 
