@@ -135,14 +135,14 @@ block content
 
     function startTap(){
         document.getElementById('start_stop').innerHTML = '<div class="btn btn-warning btn-lg btn-block disabled"  style="cursor:default">starting tap...</div>'
-        document.getElementById('current_tap_status').innerHTML = '<div class="btn btn-lg btn-block btn-outline-dark disabled" style="cursor:default">...</div>'
+        document.getElementById('current_tap_status').innerHTML = '<div class="btn btn-lg btn-block btn-outline-dark disabled" style="cursor:default"></div>'
 
         socket.emit('startTap');
     }
 
     function stopTap(){
         document.getElementById('start_stop').innerHTML = '<div class="btn btn-warning btn-lg btn-block disabled"  style="cursor:default">stopping tap...</div>'
-        document.getElementById('current_tap_status').innerHTML = '<div class="btn btn-lg btn-block btn-outline-dark disabled" style="cursor:default">...</div>'
+        document.getElementById('current_tap_status').innerHTML = '<div class="btn btn-lg btn-block btn-outline-dark disabled" style="cursor:default"></div>'
         socket.emit('stopTap');
     }
 
@@ -155,12 +155,18 @@ block content
           document.getElementById('start_stop').innerHTML = '<button id="start_stop_btn" class="btn btn-success btn-lg btn-block" onclick=startTap() style="cursor:default">START</button>'
       }
 
-      if(status.success){
+      if(status.success && status.isRunning){
           document.getElementById('current_tap_status').innerHTML = '<div class="btn btn-lg btn-block btn-outline-success disabled" style="cursor:default">'+status.current_status+'</div>'
       }else{
-          document.getElementById('current_tap_status').innerHTML = '<div class="btn btn-lg btn-block btn-outline-danger disabled" style="cursor:default">'+status.current_status+'</div>'
+      if(status.success && status.isRunning == false){
+          document.getElementById('current_tap_status').innerHTML = '<div class="btn btn-lg btn-block btn-outline-dark disabled" style="cursor:default">'+status.current_status+'</div>'
+      }else{
+        document.getElementById('current_tap_status').innerHTML = '<div class="btn btn-lg btn-block btn-outline-danger disabled" style="cursor:default">'+status.current_status+'</div>'
 
       }
+
+      }
+
 
       document.getElementById('current_tap_status_msg').innerHTML = status.msg
 
