@@ -22,18 +22,21 @@ let startTap = function(){
             }
         }
 
-        shelljs.exec("sh /home/monoid_dev/raspberry-pi/tap/startScript.sh")
+        shelljs.exec("sh /home/monoid_dev/raspberry-pi/tap/startScript.sh",function(code, stdout, stderr){
 
+            isRunning.then(response =>{
 
-        isRunning.then(response =>{
-
-            if(response.isRunning){
-                return resolve({success: true, isRunning:true, current_status:"Tap is running", msg:""})
-            }else{
-                return resolve({success: false, isRunning:false, current_status:"Tap is not running", msg:"Could not start tap!"})
-            }
-
+                if(response.isRunning){
+                    return resolve({success: true, isRunning:true, current_status:"Tap is running", msg:""})
+                }else{
+                    return resolve({success: false, isRunning:false, current_status:"Tap is not running", msg:"Could not start tap!"})
+                }
+    
+            })
         })
+
+
+
     }else{
         return resolve({success:true, isRunning:true, current_status:"Tap is running", msg: "Cannot run on windows"})
     }
