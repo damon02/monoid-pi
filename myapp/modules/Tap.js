@@ -12,7 +12,7 @@ let startTap = function(){
 
         //check of de startScript ook wel echt runt
 
-        shelljs.exec("bash /home/monoid_dev/raspberry-pi/tap/test.sh")
+        shelljs.exec("bash /home/monoid_dev/raspberry-pi/tap/check.sh")
 
         var obj = JSON.parse(fs.readFileSync('/home/monoid_dev/raspberry-pi/tap/status.json', 'utf8'));
 

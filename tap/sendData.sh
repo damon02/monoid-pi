@@ -24,22 +24,28 @@ inotifywait -m $FILE_PATH -e create -e moved_to |
                 if [ -s $FILE ]
                 FILE_SIZE=$(stat -c%s "$FILE")
                 then
-                if [[ $FILE_SIZE > 100 ]]
+                if [[ $FILE_SIZE > 220 ]]
                 then
                    JSON=`tshark -r $FILE  -T json`
                    BODY="{\"body\" : $JSON}"
                    echo "$BODY" > /home/monoid_dev/raspberry-pi/tap/tmp.json
-                   RESPONSE=`curl -d @/home/monoid_dev/raspberry-pi/tap/tmp.json -H "Content-Type: application/json" -H "Authorization: $API_TOKEN" -X POST $API_HOST_PROD`
+                   RESPONSE=`curl -s -d @/home/monoid_dev/raspberry-pi/tap/tmp.json -H "Content-Type: application/json" -H "Authorization: $API_TOKEN" -X POST $API_HOST_PROD`
+                   
+                   echo $RESPONSE
                    if [[ $RESPONSE == *"true"* ]]
                    then
                       echo "OK"
                    else
                       echo "Error in response!"
+                      
+                      #bash /home/monoid_dev/raspberry-pi/tap/stopScript/.sh
                    fi
                 else
                   echo "packet too small (probably br0 disconnected) "
+                  #bash /home/monoid_dev/raspberry-pi/tap/stopScript/.sh
                 fi
                 else
-                   echo "File is Empty"
+                   echo "Tshark error?"
+                   bash /home/monoid_dev/raspberry-pi/tap/stopScript/.sh
                 fi
         done
