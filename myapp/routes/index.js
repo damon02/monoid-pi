@@ -3,7 +3,6 @@ const router = express.Router();
 const mid = require('../middleware');
 const model = require('../models/user');
 const owasp = require('owasp-password-strength-test');
-const systemData = require('../modules/systemData')
 const Tap = require('../modules/Tap')
 const ip = require("ip");
 

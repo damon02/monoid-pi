@@ -2,10 +2,9 @@
 let app = require('../app');
 let debug = require('debug')('myapp:server');
 let http = require('http');
-const systemData = require('../modules/systemData')
 const Tap = require('../modules/Tap')
 
-let port = normalizePort(process.env.PORT || '31337');
+let port = normalizePort(process.env.PORT || '8080');
 app.set('port', port);
 
 let server = http.createServer(app);
@@ -29,7 +28,6 @@ io.sockets.on('connection', function (socket) {
             socket.emit('connection_status', { success: false, message: err })
         })
     })
-
 
     socket.on('startTap', function () {
         Tap.testConnection().then(response => {
@@ -55,26 +53,6 @@ io.sockets.on('connection', function (socket) {
     Tap.isRunning().then(response => {
         socket.emit('tap_status', response)
     })
-
-    //get system data each second
-    setInterval(function () {
-        systemData.getSystemData().then(systemData => {
-            for (let key in systemData) {
-                socket.emit(key, systemData[key])
-            }
-        }).catch(err => {
-            console.log(err)
-        })
-
-    }, 1000);
-
-    // //check api status each second
-    // setInterval(function () {
-    //   Tap.testConnection().then(connection_status =>{
-    //     socket.emit('connection_status',connection_status)
-    // })
-
-    // }, 60000); 
 
 });
 
