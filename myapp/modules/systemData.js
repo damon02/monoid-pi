@@ -22,7 +22,6 @@ let getSystemData = function(){
         sys_data.cpu_usage = Math.round(sys_data.cpu_usage)
         sys_data.cpu_temp = Math.round(sys_data.cpu_temp/1000)
         sys_data.file_usage = sys_data.file_usage.substring(0, sys_data.file_usage.length -1)
-
         return resolve(sys_data)
 
     }else{

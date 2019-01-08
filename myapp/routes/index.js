@@ -8,7 +8,6 @@ const Tap = require('../modules/Tap')
 const ip = require("ip");
 
 
-
 /* GET landing page. */
 router.get('/', function(req, res, next) {
     res.render('index', {password:"Mono1d_INC!", username: 'monoid' });
@@ -27,7 +26,8 @@ router.get('/dashboard', mid.requiresLogin, function(req, res, next) {
       {title: 'Dashboard', 
       username: User.username, 
       token: User.api_token, 
-      ip_adr: ip.address()
+      ip_adr: ip.address(),
+      last_logged_in: User.last_logged_in
     })
 
   }else{
@@ -67,6 +67,7 @@ router.post('/login', function(req, res, next) {
 // route for user logout
 router.get('/logout', (req, res) => {
   if (req.session.user && req.cookies.user_sid) {
+      model.setLastLogin()
       res.clearCookie('user_sid');
       res.redirect('/');
   } else {

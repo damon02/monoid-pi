@@ -4,7 +4,8 @@
     "username": "monoid",
     "password": "$2a$10$0JjL1xQjWaeM2dxx33Nuy.wtKSPzz7PqjoyQFLabQvOousn9Y5szy",
     "api_token": "bba9d89c-e25a-4913-bbc5-41a13f011be9",
-    "last_logged_in": "2019-01-08 10:21:40",
-    "hasChangedPassword": true
+    "current_logged_in": "2019-01-08 12:37:49",
+    "hasChangedPassword": true,
+    "last_logged_in": "2019-01-08 12:07:55"
   }
 }

@@ -26,12 +26,12 @@ let authenticate = function(username, password, callback){
 
     if(user.username === username){
         if(user.password === 'monoid' && user.hasChangedPassword === false){
-            setLastLogin()
+            setCurrentLogin()
             return callback(null, user);
         }
         bcrypt.compare(password, user.password , function(error, result) {
             if (result === true) {
-                setLastLogin()
+                setCurrentLogin()
               return callback(null, user);
             } else {
               return callback();
@@ -101,12 +101,25 @@ let writeToConfig = function(new_storage){
     fs.writeFileSync('../myapp/storage/config.json' ,JSON.stringify(new_storage,null, 2),'utf8')
 }
 
-let setLastLogin = function(){
+let setCurrentLogin = function(){
+
     var storage = JSON.parse(fs.readFileSync('../myapp/storage/config.json', 'utf8'));
 
-    storage.user.last_logged_in = new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '');
+    storage.user.current_logged_in = new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '');
 
     fs.writeFileSync('../myapp/storage/config.json',JSON.stringify(storage,null,2),'utf8')
+
+}
+
+let setLastLogin = function(){
+
+    var storage = JSON.parse(fs.readFileSync('../myapp/storage/config.json', 'utf8'));
+
+    storage.user.last_logged_in = storage.user.current_logged_in
+
+    fs.writeFileSync('../myapp/storage/config.json',JSON.stringify(storage,null,2),'utf8')
+
+
 }
 
 let hasChangedPassword = function(){
@@ -119,5 +132,6 @@ module.exports = {
     updateUser,
     getUserObject,
     writeToConfig,
-    hasChangedPassword
+    hasChangedPassword,
+    setLastLogin
 }

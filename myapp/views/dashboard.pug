@@ -5,8 +5,13 @@ block content
   container
     nav(class='navbar fixed-top bg-light')
       span(class='navbar-brand mb-0 h1') Monoid  
-      span(class='navbar-text navbar-center') <strong style='color:white'>This application is still a prototype, please treat it as such</strong>
-      span(class="navbar-text navbar-right") signed in as #{username}
+      //span(class='navbar-text navbar-center') <strong style='color:white'>This application is still a prototype, please treat it as such</strong>
+      //span(class="navbar-text navbar-right") signed in as #{username}
+      span last login: #{last_logged_in} 
+      span current ip: #{ip_adr}
+      form(method='GET'  action='/logout')
+        <button class='btn btn-primary' type='submit'>logout</button>
+      
   br
   container
     .row
@@ -90,6 +95,7 @@ block content
                 .row-justify-content-center
                   div(style="display: inline-block" id='br_nic')
               hr
+          hr
 
       .col.meme
         h2 Status
@@ -108,7 +114,7 @@ block content
         .row-justify-content-center
           h4 Tap
           div(id="start_stop")
-            button.btn.btn-warning.btn-lg.btn-block(disabled=true id='start_stop_btn') Checking...
+            button.btn.btn-warning.btn-lg.btn-block(disabled=true id='start_stop_btn'  style="cursor:default") Checking...
           //- button.btn.btn-danger.btn-lg.btn-block(disabled=false id='stop_tap' onClick='stopTap()') STOP
           div
             div(id='current_tap_status') 
