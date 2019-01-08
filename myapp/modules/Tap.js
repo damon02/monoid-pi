@@ -1,6 +1,7 @@
 const fs = require('fs');
 var shelljs = require('shelljs');
 var rp = require('request-promise');
+const os = require("os");
 
 
 let startTap = function(){
@@ -8,7 +9,7 @@ let startTap = function(){
     return new Promise(function (resolve, reject) {
 
     //run script
-    if(shelljs.which('w')){
+    if(!(os.platform() == 'win32')){
 
         //check of de startScript ook wel echt runt
 
@@ -51,7 +52,7 @@ let startTap = function(){
 let stopTap = function(msg){
     return new Promise(function (resolve, reject) {
 
-    if(shelljs.which('w')){
+    if(!(os.platform() == 'win32')){
 
     shelljs.exec('sh /home/monoid_dev/raspberry-pi/tap/stopScript.sh')
 
@@ -78,7 +79,7 @@ let isRunning = function(){
 
     return new Promise(function (resolve, reject) {
 
-    if(shelljs.which('w')){
+    if(!(os.platform() == 'win32')){
         x = shelljs.exec('sh /home/monoid_dev/raspberry-pi/tap/isRunning.sh').stdout
 
         

@@ -50,10 +50,15 @@ socket.on('testApiConnection', function(){
   Tap.testConnection().then(connection_status =>{
 
     socket.emit('connection_status',connection_status)
+
   }).catch(err =>{
-    socket.emit('connection_status',{success:false,message:err})
+    socket.emit('connection_status',{success:false,message:'Network error'})
   })
 
+  Tap.isRunning().then(response =>{
+
+    socket.emit('tap_status',response)
+  })
 })
 
 
@@ -71,21 +76,6 @@ socket.on('testApiConnection', function(){
     socket.emit('tap_status',{success:false, current_status:"Tap not running", msg:'could not connect to API'})
   })
 })
-
-
-  Tap.testConnection().then(connection_status =>{
-
-    socket.emit('connection_status',connection_status)
-
-  }).catch(err =>{
-    socket.emit('connection_status',{success:false,message:'Network error'})
-  })
-
-  Tap.isRunning().then(response =>{
-
-    socket.emit('tap_status',response)
-  })
-
 
 
 //get system data each second

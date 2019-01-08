@@ -1,13 +1,14 @@
 //const si = require('systeminformation')
 const fs = require('fs');
 var shelljs = require('shelljs');
+const os = require("os");
 
 let getSystemData = function(){
 
 
     return new Promise(function (resolve, reject) {
 
-    if(shelljs.which('w')){
+    if(!(os.platform() == 'win32')){
 
         let str = shelljs.exec('sh /home/monoid_dev/raspberry-pi/myapp/modules/getSystemData.sh',{silent:true}).stdout
 
