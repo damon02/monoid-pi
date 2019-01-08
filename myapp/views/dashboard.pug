@@ -191,6 +191,7 @@ block content
         document.getElementById('start_stop_btn').disabled = true
         document.getElementById('connection_status').innerHTML = '<div class="btn btn-lg btn-block btn-outline-danger disabled" style="cursor:default">not connected</div>'
         document.getElementById('connection_status_msg').innerHTML = connection_status.message
+        console.log(connection_status.message)
       }else{
         document.getElementById('start_stop_btn').disabled = false
         document.getElementById('connection_status_msg').innerHTML = ""

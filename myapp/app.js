@@ -63,7 +63,7 @@ app.use(session({
     //secure: true, //moet true gezet worden als er HTTPS is
     httpOnly: true,
     path: '/',
-    expires: new Date(Date.now() + 60 * 60 * 1000)  //one hour
+    expires: new Date(Date.now() + 15 * 60 * 1000)  //15 minutes
   }
 }));
 

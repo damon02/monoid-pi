@@ -132,7 +132,7 @@ let testConnection = function(){
     }).then(body =>{
         return resolve(body)
     }).catch(err =>{
-        return reject(err)
+        return reject("Could not connect to API")
     })
     })
 }
