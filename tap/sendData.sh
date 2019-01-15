@@ -27,8 +27,7 @@ inotifywait -m $FILE_PATH -e create -e moved_to |
                 if [[ $FILE_SIZE > 220 ]]
                 then
                    JSON=`tshark -r $FILE  -T json`
-                   BODY="{\"body\" : $JSON}"
-                   echo "$BODY" > /home/monoid_dev/raspberry-pi/tap/tmp.json
+                   echo "$JSON" > /home/monoid_dev/raspberry-pi/tap/tmp.json
                    RESPONSE=`curl -s -d @/home/monoid_dev/raspberry-pi/tap/tmp.json -H "Content-Type: application/json" -H "Authorization: $API_TOKEN" -X POST $API_HOST_PROD`
                    
                    echo $RESPONSE
