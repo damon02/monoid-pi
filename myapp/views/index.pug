@@ -12,6 +12,7 @@ block content
         br
         div 
           form(method='POST' action='/login')
+            input(type="hidden" name="_csrf" value=csrfToken)
             input.form-control(style="text-align:center" value=username type='text' id='username' placeholder='username' name='username' required autocomplete="off")
             input.form-control(style="text-align:center"   type='password' id='password' value=password placeholder='password' name='password' required autocomplete="off")
             br

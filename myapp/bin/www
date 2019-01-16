@@ -7,8 +7,18 @@
 var app = require('../app');
 var debug = require('debug')('myapp:server');
 var http = require('http');
-const systemData = require('../modules/systemData')
-const Tap = require('../modules/Tap')
+const https = require("https");
+const fs = require('fs')
+
+const systemData = require('../modules/systemData');
+const Tap = require('../modules/Tap');
+
+const options = {
+  
+  key: fs.readFileSync('C:\\Users\\root\\Desktop\\Security Engineering\\app\\myapp\\keys\\localhost.key', 'utf8'),
+  cert: fs.readFileSync('C:\\Users\\root\\Desktop\\Security Engineering\\app\\myapp\\keys\\localhost.crt', 'utf8'),
+};
+
 
 
 /**
@@ -22,13 +32,29 @@ app.set('port', port);
  * Create HTTP server.
  */
 
-var server = http.createServer(app);
+var server = https.createServer(options, app);
 
 
-var io = require('socket.io')(server)
+var io = require('socket.io').listen(server, {
+  secure: true
+})
+
+let sharedsession = require("express-socket.io-session")
+
 
 
 io.sockets.on('connection', function (socket) {
+
+
+  // if (socket.request.session.user && socket.request.cookies.user_sid) {
+
+  //   console.log('authenticated user!')
+  // }
+
+  //  if (req.session.user && req.cookies.user_sid) {
+
+  // console.log(socket.handshake.headers.cookie.suspicious_token)
+
 
 
   Tap.isRunning().then(response =>{

@@ -19,6 +19,7 @@ block content
         h2 User
         h4 Username
         form(method='POST' action='/updateUsername')
+          input(type="hidden" name="_csrf" value=csrfToken)
           <div class="input-group mb-3">
             input.form-control(type='text' id='username' placeholder='username' value=username name='username' required autocomplete="off")
             //- <input type="text" class="form-control" placeholder="Recipient's username" aria-label="Recipient's username" aria-describedby="basic-addon2">
@@ -29,6 +30,8 @@ block content
         br
         h4 API token
         form(method='POST' action='/updateApiToken')
+          input(type="hidden" name="_csrf" value=csrfToken)
+
           <div class="input-group mb-3">
             input.form-control(type='text' id='apiToken' placeholder='API token' value=token name='apiToken' required autocomplete="off")        
             //- <input type="text" class="form-control" placeholder="Recipient's username" aria-label="Recipient's username" aria-describedby="basic-addon2">
@@ -38,6 +41,7 @@ block content
           </div>
         h4 Password
         form(method='POST' action='/updatePassword')
+          input(type="hidden" name="_csrf" value=csrfToken)
           div.form-group
             input.form-control(type='password' id='password' placeholder='Current password' name='password' required autocomplete="off")
           div.form-group
@@ -129,9 +133,19 @@ block content
 
 
 
-
   script.
-    const socket = io();
+
+    let token = "#{socketToken}"
+    const socket = io({
+      transportOptions: {
+        polling: {
+          extraHeaders: {
+            'suspicious_token': token
+          }
+        }
+      }
+    });
+    
 
 
     function testApiConnection(){
@@ -146,7 +160,7 @@ block content
         document.getElementById('start_stop').innerHTML = '<div class="btn btn-warning btn-lg btn-block disabled"  style="cursor:default">starting tap...</div>'
         document.getElementById('current_tap_status').innerHTML = '<div class="btn btn-lg btn-block btn-outline-dark disabled" style="cursor:default">Loading</div>'
 
-        socket.emit('startTap');
+        socket.emit('startTap',);
     }
 
     function stopTap(){

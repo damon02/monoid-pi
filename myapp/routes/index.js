@@ -6,28 +6,38 @@ const owasp = require('owasp-password-strength-test');
 const systemData = require('../modules/systemData')
 const Tap = require('../modules/Tap')
 const ip = require("ip");
+let csrf = require('csurf');
+var bodyParser = require('body-parser')
+const uuidv4 = require('uuid/v4');
+
+// setup route middlewares
+var csrfProtection = csrf({ cookie: true })
+var parseForm = bodyParser.urlencoded({ extended: false })
+
+
 
 
 /* GET landing page. */
-router.get('/', function(req, res, next) {
-    res.render('index', {password:"Mono1d_INC!", username: 'monoid' });
-});
-
-
+router.get('/',csrfProtection, function(req, res, next) {
+    res.render('index', {password:"Mono1d_INC!", username: 'monoid', csrfToken: req.csrfToken() });
+}); 
 
 
 // GET /dashboard
-router.get('/dashboard', mid.requiresLogin, function(req, res, next) {
+router.get('/dashboard',csrfProtection, mid.requiresLogin, function(req, res, next) {
 
   let User = model.getUserObject()
 
   if (req.session.user && req.cookies.user_sid) {
+
       return res.render('dashboard', 
       {title: 'Dashboard', 
       username: User.username, 
       token: User.api_token, 
       ip_adr: ip.address(),
-      last_logged_in: User.last_logged_in
+      last_logged_in: User.last_logged_in,
+      csrfToken: req.csrfToken(),
+      socketToken: req.session.socketToken
     })
 
   }else{
@@ -38,7 +48,7 @@ router.get('/dashboard', mid.requiresLogin, function(req, res, next) {
 });
 
 // POST /login
-router.post('/login', function(req, res, next) {
+router.post('/login', parseForm, csrfProtection, function(req, res, next) {
 
   if (req.body.username && req.body.password) {
     model.authenticate(req.body.username, req.body.password, function (error, user) {
@@ -48,6 +58,7 @@ router.post('/login', function(req, res, next) {
       }  else {
 
         req.session.user = user;
+        req.session.socketToken = uuidv4();
 
         if(user.hasChangedPassword === false){
           return res.redirect('/changedefault');
@@ -75,10 +86,10 @@ router.get('/logout', (req, res) => {
   }
 });
 
-router.get('/changedefault', mid.requiresLogin, function(req, res, next) {
+router.get('/changedefault', csrfProtection,mid.requiresLogin, function(req, res, next) {
   if (req.session.user && req.cookies.user_sid) {
       if(!model.hasChangedPassword()){
-        return res.render('changedefault', { title: 'passwords cannot be restored when lost!'});
+        return res.render('changedefault', { title: 'passwords cannot be restored when lost!', csrfToken: req.csrfToken()});
       }else{
         res.redirect('/dashboard')
       }
@@ -90,7 +101,7 @@ router.get('/changedefault', mid.requiresLogin, function(req, res, next) {
 });
 
 
-router.post('/changedefault',mid.requiresLogin, (req, res,next) => {
+router.post('/changedefault',parseForm, csrfProtection,mid.requiresLogin, (req, res,next) => {
 
   if (req.session.user && req.cookies.user_sid) {
 
@@ -135,7 +146,7 @@ router.post('/changedefault',mid.requiresLogin, (req, res,next) => {
 
 // }) 
 
-router.post('/updateApiToken',mid.requiresLogin, (req, res,next) => {
+router.post('/updateApiToken', parseForm, csrfProtection,mid.requiresLogin, (req, res,next) => {
 
   if (req.session.user && req.cookies.user_sid) {
     if(req.body.apiToken.length > 5 && req.body.apiToken.length  < 40){
@@ -158,7 +169,7 @@ router.post('/updateApiToken',mid.requiresLogin, (req, res,next) => {
 })
 
 
-router.post('/updateUsername',mid.requiresLogin, (req, res,next) => {
+router.post('/updateUsername', parseForm, csrfProtection,mid.requiresLogin, (req, res,next) => {
   if (req.session.user && req.cookies.user_sid) {
     if(req.body.username.length > 3 && req.body.username.length  < 30){
       let itemsToUpdate = {"username": req.body.username}
@@ -180,7 +191,7 @@ router.post('/updateUsername',mid.requiresLogin, (req, res,next) => {
 }) 
 
 
-router.post('/updatePassword', mid.requiresLogin, (req, res,next) => {
+router.post('/updatePassword', parseForm, csrfProtection, mid.requiresLogin, (req, res,next) => {
 
   if (req.session.user && req.cookies.user_sid) {
 

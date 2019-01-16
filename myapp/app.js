@@ -5,12 +5,13 @@ const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const expressValidator = require('express-validator')
 const indexRouter = require('./routes/index');
-
+var ip = require("ip");
 var session = require('express-session')
 const bodyParser = require('body-parser');
 const app = express();
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
+var cors = require('cors');
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -23,24 +24,43 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(expressValidator())
 
-//SECURITY STUFF
-app.use(helmet.noCache())
+
+/*
+Helmet setup 
+This middleware adds some protective headers see for more info -> https://www.npmjs.com/package/helmet
+*/
+
+
 app.use(helmet());
+app.use(helmet.noCache())
+app.use(helmet.contentSecurityPolicy({
+    directives: {
+        defaultSrc: ["'self'"],
+        styleSrc: ["'self' 'unsafe-inline'"],
+        imgSrc: ["'self' data:"],
+        scriptSrc: ["'self' 'unsafe-inline'"],
+        connectSrc: ["'self'"],
+        objectSrc: ["'none'"],
+    }
+}))
+app.use(helmet.referrerPolicy({ policy: 'no-referrer' }));
 
-// /**
-//  * Rate limit all requests
-//  */
-// var limiter = new rateLimit({
-//   windowMs: 60*1000, // How long is the timespan?
-//   delayAfter: 0, //begin slowing down responses after the first request
-//   delayMs: 0, //slow down subsequent responses by 3 seconds per request
-//   max: 5000, //start blocking after 5 requests
-//   message:"Too many request, try again in {minutes} minutes",
-// headers:true//show header stats with attemts remaining
-// });
 
-// //  apply to all requests
-// app.use(limiter);
+
+/**
+ * Rate limit all requests
+ */
+var limiter = new rateLimit({
+  windowMs: 60*1000, // How long is the timespan?
+  delayAfter: 0, //begin slowing down responses after the first request
+  delayMs: 0, //slow down subsequent responses by 3 seconds per request
+  max: 200, //start blocking after 200 requests
+  message:"Congrats! you are rate-limited!",
+headers:true//show header stats with attemts remaining
+});
+
+//  apply to all requests
+app.use(limiter);
 
 
 //remove server header
@@ -53,19 +73,37 @@ app.use(function (req, res, next) {
 });
 
 
-// use sessions for tracking logins
-app.use(session({
+// use sessions for tracking logins  
+  
+let sessionMiddleware = session({
   key: 'user_sid',
   secret: '5c3537cd0132a595cbe0abf171428063bab4bdbb79900361f870c35d4d4267be',
-  resave: false,
+  resave: true,
   saveUninitialized: false,
   cookie: {
-    //secure: true, //moet true gezet worden als er HTTPS is
+    secure: true, //moet true gezet worden als er HTTPS is
     httpOnly: true,
     path: '/',
-    expires: new Date(Date.now() + 15 * 60 * 1000)  //15 minutes
+    expires: new Date(Date.now() + 15 * 60 * 1000),  //15 minutes,
+    sameSite: true
+    
   }
-}));
+})
+
+app.use(sessionMiddleware)
+
+//CORS
+
+let adres= ip.address()
+
+var corsOptions = {
+  origin: adres,
+  methods: 'GET,POST',
+  allowedHeaders: ['Accept', 'Content-Type'],
+  credentials: true,
+  // preflightContinue: true
+}
+app.use(cors(corsOptions));
 
 
 // This middleware will check if user's cookie is still saved in browser and user is not set, then automatically log the user out.
