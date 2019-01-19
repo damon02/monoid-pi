@@ -10,11 +10,9 @@ var http = require('http');
 const https = require("https");
 const fs = require('fs')
 
-const systemData = require('../modules/systemData');
-const Tap = require('../modules/Tap');
+
 
 const options = {
-  
   key: fs.readFileSync('C:\\Users\\root\\Desktop\\Security Engineering\\app\\myapp\\keys\\localhost.key', 'utf8'),
   cert: fs.readFileSync('C:\\Users\\root\\Desktop\\Security Engineering\\app\\myapp\\keys\\localhost.crt', 'utf8'),
 };
@@ -29,102 +27,17 @@ var port = normalizePort(process.env.PORT || '31337');
 app.set('port', port);
 
 /**
- * Create HTTP server.
+ * Create HTTPS server.
  */
 
 var server = https.createServer(options, app);
 
+/**
+ * Socket.io
+ */
 
-var io = require('socket.io').listen(server, {
-  secure: true
-})
-
-let sharedsession = require("express-socket.io-session")
-
-
-
-io.sockets.on('connection', function (socket) {
-
-
-  // if (socket.request.session.user && socket.request.cookies.user_sid) {
-
-  //   console.log('authenticated user!')
-  // }
-
-  //  if (req.session.user && req.cookies.user_sid) {
-
-  // console.log(socket.handshake.headers.cookie.suspicious_token)
-
-
-
-  Tap.isRunning().then(response =>{
-    socket.emit('tap_status',response)
-  })
-
-  socket.on('stopTap', function(){
-  
-    Tap.stopTap().then(response =>{
-      response.msg="user stopped the tap"
-      socket.emit('tap_status',response)
-    })
-  
-  })
-  
-  
-socket.on('testApiConnection', function(){
-
-  Tap.testConnection().then(connection_status =>{
-
-    socket.emit('connection_status',connection_status)
-
-  }).catch(err =>{
-    socket.emit('connection_status',{success:false,message:'Network error'})
-  })
-
-  Tap.isRunning().then(response =>{
-
-    socket.emit('tap_status',response)
-  })
-})
-
-
-  socket.on('startTap', function(){
-    Tap.testConnection().then(response =>{
-      if(response.success){
-        Tap.startTap().then(result =>{
-          
-          socket.emit('tap_status',result)
-        })
-      }else{
-        socket.emit('tap_status',{success:false, current_status:"Tap not running", msg:'could not connect to API'})
-      }
-  }).catch(err =>{
-    socket.emit('tap_status',{success:false, current_status:"Tap not running", msg:'could not connect to API'})
-  })
-})
-
-
-//get system data each second
-  setInterval(function () {
-    systemData.getSystemData().then(systemData =>{
-      for(let key in systemData){
-        socket.emit(key, systemData[key])
-      }
-  }).catch( err =>{
-    console.log(err)
-  })
-  
-}, 1000); 
-
-// //check api status each second
-// setInterval(function () {
-//   Tap.testConnection().then(connection_status =>{
-//     socket.emit('connection_status',connection_status)
-// })
-
-// }, 60000); 
-
-});
+var io     = app.io
+io.attach( server );
 
 
 /**
@@ -195,4 +108,4 @@ function onListening() {
   debug('Listening on ' + bind);
 }
 
-module.exports = io;
+module.exports = server
