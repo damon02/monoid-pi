@@ -1,15 +1,28 @@
 doctype html
 html
   head
-    title= title
-    script(type='script' src="jquery-3.3.1.min.js")
+    title= 'Monoid NIDS'
+    link(type='script' src="jquery-3.3.1.min.js")
+    //<link rel="icon" type="img/ico" href="img/favicon.ico">
+    link(rel='icon' type='img/ico' href='images/favicon.ico')
     script(src='/socket.io/socket.io.js')
     link(rel='stylesheet', href='/stylesheets/style.css')
     link(rel='stylesheet', href='/stylesheets/bootstrap.min.css')
     script(type='script' src='/javascripts/bootstrap.min.js')
 
   body
+    <video autoplay muted loop id="myVideo">
+      <source src="vid/lines1080.mp4" type="video/mp4">
+    </video> 
     block content
+    block footer
+      <footer class="page-footer pt-2" style="position:fixed; width:100%; background:#E74C3C; bottom:0; right:2px">
+      <div style='text-align: center'>
+          <span> <strong> THIS APPLICATION IS STILL IN DEVELOPMENT AND IS BY NO MEANS PRODUCTION READY </strong> </span>
+          br
+          <span>© Copyright 2019 by Monoid INC - All Rights Reserved </span>
+      </div>
+    </footer>
 
     //- if message && message.length
     //-   strong #{message}

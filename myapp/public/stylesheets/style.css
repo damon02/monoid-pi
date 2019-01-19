@@ -7,6 +7,8 @@ a {
   color: #00B7FF;
 }
 
+
+
 .meme {
   text-align: center;
 }
@@ -22,4 +24,14 @@ a {
 
 .onlineText{
   color: chartreuse
+}
+
+
+/* Style the video: 100% width and height to cover the entire window */
+#myVideo {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  min-width: 100%;
+  min-height: 100%;
 }

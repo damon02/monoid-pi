@@ -9,9 +9,9 @@ function loggedOut(req, res, next) {
     if (req.session.user && req.cookies.user_sid) {
         return next();
     } else {
-      var err = new Error('Page not found');
-      err.status = 404;
-      return next(err);
+      res.status(404);
+      res.render('404');
+      return next();
     }
   }
   

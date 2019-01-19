@@ -2,9 +2,13 @@ extends layout
 
 
 block content
+  <video autoplay muted loop id="myVideo">
+    <source src="vid/lines1080.mp4" type="video/mp4">
+  </video> 
   container
-    nav(class='navbar fixed-top bg-light')
-      span(class='navbar-brand mb-0 h1') Monoid  
+    nav(class='navbar fixed-top')
+      span(class='navbar-brand mb-0 h1')
+        <button class='btn btn-light' onClick='stopBackground()'>stop background</button>
       //span(class='navbar-text navbar-center') <strong style='color:white'>This application is still a prototype, please treat it as such</strong>
       //span(class="navbar-text navbar-right") signed in as #{username}
       span last login: #{last_logged_in} 
@@ -135,6 +139,10 @@ block content
 
   script.
 
+    function stopBackground(){
+      document.getElementById("myVideo").remove();
+    }
+
     let token = "#{socketToken}"
     const socket = io({
       transportOptions: {
@@ -221,6 +229,8 @@ block content
       
       
       });
+
+
 
 
     //Kei experimenteel

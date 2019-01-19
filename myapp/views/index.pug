@@ -2,13 +2,16 @@ extends layout
 
 block content
   .container
+
     .row
       .col-4
 
       <div class="col-md-4 col-md-offset-4" style="text-align:center">
-        h1= 'Monoid'
+        h1= 'Monoid NIDS'
         p='Network monitoring made simple'
-        br        
+
+        img(width='150px' height='150px' src='images/mstile-150x150.png')
+
         br
         div 
           form(method='POST' action='/login')

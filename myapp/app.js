@@ -65,6 +65,7 @@ app.use(limiter);
 
 //remove server header
 app.disable('x-powered-by');
+app.set('etag', false); // turn off
 
 
 app.use(function (req, res, next) {
@@ -125,14 +126,16 @@ app.use('/', indexRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
-  next(createError(404));
+  res.status(404);
+  res.render('404');
+  // next(createError(404));
 });
 
 // error handler
 app.use(function(err, req, res, next) {
   // set locals, only providing error in development
   res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
+  res.locals.error = req.app.get('env') === 'production' ? err : {};
 
   // render the error page
   res.status(err.status || 500);
