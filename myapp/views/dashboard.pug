@@ -8,7 +8,7 @@ block content
   container
     nav(class='navbar fixed-top')
       span(class='navbar-brand mb-0 h1')
-        <button class='btn btn-light' onClick='stopBackground()'>stop background</button>
+        <button class='btn btn-outline-dark' onClick='stopBackground()'>stop background</button>
       //span(class='navbar-text navbar-center') <strong style='color:white'>This application is still a prototype, please treat it as such</strong>
       //span(class="navbar-text navbar-right") signed in as #{username}
       span last login: #{last_logged_in} 
@@ -97,11 +97,11 @@ block content
               .col
                 h4= "Network Monitor"
                 .row-justify-content-center
-                  div(style="display: inline-block" id='mon_nic')
+                  div(style="display: inline-block;background:#222" id='mon_nic')
               .col
                 h4="Network Bridge"
                 .row-justify-content-center
-                  div(style="display: inline-block" id='br_nic')
+                  div(style="display: inline-block;background:#222" id='br_nic')
               hr
           hr
 
@@ -122,11 +122,11 @@ block content
         .row-justify-content-center
           h4 Tap
           div(id="start_stop")
-            button.btn.btn-warning.btn-lg.btn-block(disabled=true id='start_stop_btn'  style="cursor:default") Checking...
+            button.btn.btn-warning.btn-lg.btn-block(disabled=true id='start_stop_btn'  style="cursor:default;background:#222") Checking...
           //- button.btn.btn-danger.btn-lg.btn-block(disabled=false id='stop_tap' onClick='stopTap()') STOP
           div
             div(id='current_tap_status') 
-              button.btn.btn-lg.btn-block.btn-outline-dark( style="cursor:default")
+              button.btn.btn-lg.btn-block.btn-outline-dark( style="cursor:default;background:#222")
  
             
             <small id='current_tap_status_msg'class="form-text text-muted"></small> 
@@ -157,7 +157,7 @@ block content
 
 
     function testApiConnection(){
-        document.getElementById('connection_status').innerHTML = '<div class="btn btn-lg btn-block btn-outline-warning disabled" style="cursor:default">Checking..</div>'
+        document.getElementById('connection_status').innerHTML = '<div class="btn btn-lg btn-block btn-outline-warning disabled" style="cursor:default;background:#222">Checking..</div>'
         document.getElementById('start_stop_btn').disabled = true
         document.getElementById('connection_status_msg').innerHTML = ""
         socket.emit('testApiConnection');
@@ -165,15 +165,15 @@ block content
     testApiConnection()
 
     function startTap(){
-        document.getElementById('start_stop').innerHTML = '<div class="btn btn-warning btn-lg btn-block disabled"  style="cursor:default">starting tap...</div>'
-        document.getElementById('current_tap_status').innerHTML = '<div class="btn btn-lg btn-block btn-outline-dark disabled" style="cursor:default">Loading</div>'
+        document.getElementById('start_stop').innerHTML = '<div class="btn btn-warning btn-lg btn-block disabled"  style="cursor:default;background:#222">starting tap...</div>'
+        document.getElementById('current_tap_status').innerHTML = '<div class="btn btn-lg btn-block btn-outline-dark disabled" style="cursor:default;background:#222">Loading</div>'
 
         socket.emit('startTap',);
     }
 
     function stopTap(){
-        document.getElementById('start_stop').innerHTML = '<div class="btn btn-warning btn-lg btn-block disabled"  style="cursor:default">stopping tap...</div>'
-        document.getElementById('current_tap_status').innerHTML = '<div class="btn btn-lg btn-block btn-outline-dark disabled" style="cursor:default">Loading</div>'
+        document.getElementById('start_stop').innerHTML = '<div class="btn btn-warning btn-lg btn-block disabled"  style="cursor:default;background:#222">stopping tap...</div>'
+        document.getElementById('current_tap_status').innerHTML = '<div class="btn btn-lg btn-block btn-outline-dark disabled" style="cursor:default;background:#222">Loading</div>'
         socket.emit('stopTap');
     }
 
@@ -187,12 +187,12 @@ block content
       }
 
       if(status.success && status.isRunning){
-          document.getElementById('current_tap_status').innerHTML = '<div class="btn btn-lg btn-block btn-outline-success disabled" style="cursor:default">'+status.current_status+'</div>'
+          document.getElementById('current_tap_status').innerHTML = '<div class="btn btn-lg btn-block btn-outline-success disabled" style="cursor:default;background:#222">'+status.current_status+'</div>'
       }else{
       if(status.success && status.isRunning == false){
-          document.getElementById('current_tap_status').innerHTML = '<div class="btn btn-lg btn-block btn-outline-dark disabled" style="cursor:default">'+status.current_status+'</div>'
+          document.getElementById('current_tap_status').innerHTML = '<div class="btn btn-lg btn-block btn-outline-dark disabled" style="cursor:default;background:#222">'+status.current_status+'</div>'
       }else{
-        document.getElementById('current_tap_status').innerHTML = '<div class="btn btn-lg btn-block btn-outline-danger disabled" style="cursor:default">'+status.current_status+'</div>'
+        document.getElementById('current_tap_status').innerHTML = '<div class="btn btn-lg btn-block btn-outline-danger disabled" style="cursor:default;background:#222">'+status.current_status+'</div>'
 
       }
 
@@ -219,12 +219,12 @@ block content
     socket.on('connection_status', function(connection_status) {
       if(connection_status.success === false){
         document.getElementById('start_stop_btn').disabled = true
-        document.getElementById('connection_status').innerHTML = '<div class="btn btn-lg btn-block btn-outline-danger disabled" style="cursor:default">not connected</div>'
+        document.getElementById('connection_status').innerHTML = '<div class="btn btn-lg btn-block btn-outline-danger disabled" style="cursor:default;background:#222">not connected</div>'
         document.getElementById('connection_status_msg').innerHTML = connection_status.message
       }else{
         document.getElementById('start_stop_btn').disabled = false
         document.getElementById('connection_status_msg').innerHTML = ""
-        document.getElementById('connection_status').innerHTML = '<div class="btn btn-lg btn-block btn-outline-success disabled" style="cursor:default">Connected</div>'
+        document.getElementById('connection_status').innerHTML = '<div class="btn btn-lg btn-block btn-outline-success disabled" style="cursor:default;background:#222">Connected</div>'
       }
       
       
@@ -238,9 +238,9 @@ block content
       for(let nic in nic_data){
           let status = nic_data[nic].status
           if(status.includes('up')){
-            document.getElementById(nic).innerHTML = '<div class="btn btn-outline-success disabled" style="cursor:default;">'+status+'</div>'
+            document.getElementById(nic).innerHTML = '<div class="btn btn-outline-success disabled" style="cursor:default;background:#222">'+status+'</div>'
           }else{
-            document.getElementById(nic).innerHTML = '<div class="btn btn-outline-danger disabled" style="cursor:default;">'+status+'</div>'
+            document.getElementById(nic).innerHTML = '<div class="btn btn-outline-danger disabled" style="cursor:default;background:#222">'+status+'</div>'
             }
           }
       });
