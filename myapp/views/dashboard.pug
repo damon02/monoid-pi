@@ -215,9 +215,10 @@ block content
     socket.on('cpu_temp', function(cpu_temp) {document.getElementById('cpu_temp').innerHTML = cpu_temp});
 
     
-
     socket.on('connection_status', function(connection_status) {
+
       if(connection_status.success === false){
+
         document.getElementById('start_stop_btn').disabled = true
         document.getElementById('connection_status').innerHTML = '<div class="btn btn-lg btn-block btn-outline-danger disabled" style="cursor:default;background:#222">not connected</div>'
         document.getElementById('connection_status_msg').innerHTML = connection_status.message

@@ -102,15 +102,13 @@ let testConnection = function(){
     return new Promise(function (resolve, reject) {
 
     let token = JSON.parse(fs.readFileSync('../myapp/storage/config.json', 'utf8')).user.api_token;
-
-        rp({
-        url: "https://api.monoidinc.nl/data/store-packets",
+    rp({
+        url: "https://api.monoidinc.nl/data/test-connection",
         method: "GET",
         headers : {
-            "Authorization" : token
-        },
-        json: true,   // <--Very important!!!
-        body: {}
+            "Authorization" : token,
+            'Content-Type': 'application/json'
+        },json:true
     }).then(body =>{
         return resolve(body)
     }).catch(err =>{

@@ -211,6 +211,8 @@ io.on('connection', function (socket) {
 socket.on('testApiConnection', function(){
 
   Tap.testConnection().then(connection_status =>{
+    console.log(connection_status)
+
 
     socket.emit('connection_status',connection_status)
 
