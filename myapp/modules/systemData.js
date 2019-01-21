@@ -5,7 +5,6 @@ const os = require("os");
 
 let getSystemData = function(){
 
-
     return new Promise(function (resolve, reject) {
 
     if(!(os.platform() == 'win32')){
@@ -13,7 +12,6 @@ let getSystemData = function(){
         let str = shelljs.exec('sh /home/monoid_dev/raspberry-pi/myapp/modules/getSystemData.sh',{silent:true}).stdout
 
         let sys_data = JSON.parse(str).sys_data
-
 
         sys_data.datetime = new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '')
 
@@ -39,18 +37,6 @@ let getSystemData = function(){
 
 }
 
-
-let inetLatency = async function(host){
-    try {
-        const data = await si.inetLatency(host);
-        //console.log(data);
-        return data;
-    }
-    catch (error) {
-        console.error(error);
-        return ""
-    }
-}
 
 module.exports = {
     getSystemData

@@ -161,14 +161,6 @@ io.use(sharedsession(sessionMiddleware, {
 app.io           = io;
 
 
-
-
-// io.set('authorization', function (handshakeData, callback) {
-//   console.log(handshakeData.rawHeaders)
-//   callback(null, true); // error first, 'authorized' boolean second 
-// });
-
-
 io.set('authorization', function (data, accept) {
   // check if there's a cookie header
 

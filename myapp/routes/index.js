@@ -15,8 +15,6 @@ var csrfProtection = csrf({ cookie: true })
 var parseForm = bodyParser.urlencoded({ extended: false })
 
 
-
-
 /* GET landing page. */
 router.get('/',csrfProtection, function(req, res, next) {
     res.render('index', {password:"Mono1d_INC!", username: 'monoid', csrfToken: req.csrfToken() });
@@ -95,7 +93,7 @@ router.get('/changedefault', csrfProtection,mid.requiresLogin, function(req, res
       }
   }else{
     var err = new Error('Page not found');
-    err.status = 404;
+    err.status = 404; 
     return next("error");
   }
 });
@@ -141,10 +139,6 @@ router.post('/changedefault',parseForm, csrfProtection,mid.requiresLogin, (req, 
           return next(err);
   }
 });
-
-// router.get('/userData', (req, res,next) => {
-
-// }) 
 
 router.post('/updateApiToken', parseForm, csrfProtection,mid.requiresLogin, (req, res,next) => {
 
@@ -216,61 +210,7 @@ router.post('/updatePassword', parseForm, csrfProtection, mid.requiresLogin, (re
     err.status = 404;
     return next(err);
 }
-
-  
-
-  
 }) 
-
-// router.post('/startTap',mid.requiresLogin, (req, res,next) => {
-//   if (req.session.user && req.cookies.user_sid) {
-
-
-//     Tap.startTap().then(response =>{
-
-//       return response
-      
-//     })
-
-
-
-//   }else {
-//     err.status = 404;
-//     return next(err);
-// }
-
-// }) 
-
-
-// router.post('/stopTap',mid.requiresLogin, (req, res,next) => {
-//   if (req.session.user && req.cookies.user_sid) {
-
-//     Tap.stopTap().then(response =>{
-//       return response
-
-//     })
-//   }else {
-//     err.status = 404;
-//     return next(err);
-// }
-
-// }) 
-
-
-// router.post('/testConnection',mid.requiresLogin, (req, res,next) => {
-
-//   Tap.testConnection().then(response =>{
-
-    
-
-//     return response
-//   }).catch( err =>{
-//     return err
-//   })
-
-// }) 
-
-
 
 
 

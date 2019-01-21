@@ -96,25 +96,6 @@ let isRunning = function(){
 
 }
 
-// let tapInfo = async function(){
-
-//     //check if it is running propperly
-//     if(shelljs.which('w')){
-//         shelljs.exec('/home/monoid_dev/raspberry-pi/tap/tapInfo.sh')
-//     }else{
-//         return "windows"
-//     }
-// }
-
-// let tapTest = async function(){
-
-//     if(shelljs.which('w')){
-//         shelljs.exec('/home/monoid_dev/raspberry-pi/tap/tapTest.sh')
-//     }else{
-//         return "windows"
-//     }
-// }
-
 
 let testConnection = function(){
 
@@ -124,7 +105,7 @@ let testConnection = function(){
 
         rp({
         url: "https://api.monoidinc.nl/data/store-packets",
-        method: "POST",
+        method: "GET",
         headers : {
             "Authorization" : token
         },
