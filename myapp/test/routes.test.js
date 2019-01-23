@@ -52,17 +52,17 @@ it('Unauthenticated GET /' , function(done) {
 });
 
 
-// it('Unauthenticated GET /dashboard', function(done) {
-//   supertest(app)
-//     .get('/dashboard')
-//     .expect(404,done)
-// });
+it('Unauthenticated GET /dashboard', function(done) {
+  supertest(app)
+    .get('/dashboard')
+    .expect(404,done)
+});
       
-// it('Unauthenticated GET /changedefault', function(done) {
-//   supertest(app)
-//     .get('/changedefault')
-//     .expect(404,done)
-// });
+it('Unauthenticated GET /changedefault', function(done) {
+  supertest(app)
+    .get('/changedefault')
+    .expect(404,done)
+});
 
 it('Unauthenticated GET /logout', function(done) {
   supertest(app)
@@ -164,14 +164,13 @@ it('Unauthenticated Valid  POST /login' , function(done) {
     });
 
   //Authenticated GETS
-  // it('Authenticated  GET /dashboard' , function(done) {
-  //   authenticatedSession.get('/dashboard')
-  //   .then(response => {
-  //     done()
-  //   })
-  // });
+  it('Authenticated  GET /dashboard' , function(done) {
+    authenticatedSession.get('/dashboard')
+    .then(response => {
+      done()
+    })
+  });
   
-
   
 
   //Authenticated POSTS
@@ -179,6 +178,8 @@ it('Unauthenticated Valid  POST /login' , function(done) {
 
   it('Authenticated  POST /updateApiToken' , function(done) {
     authenticatedSession.post('/updateApiToken')
+    .expect(200,done)
+
     .then(response => {
       done()
     })
@@ -187,6 +188,8 @@ it('Unauthenticated Valid  POST /login' , function(done) {
 
   it('Authenticated  POST /updateUsername' , function(done) {
     authenticatedSession.post('/updateUsername')
+    .expect(200,done)
+
     .then(response => {
       done()
     })
@@ -195,6 +198,7 @@ it('Unauthenticated Valid  POST /login' , function(done) {
   
   it('Authenticated  POST /updatePassword' , function(done) {
     authenticatedSession.post('/updatePassword')
+    .expect(200,done)
     .then(response => {
       done()
     })

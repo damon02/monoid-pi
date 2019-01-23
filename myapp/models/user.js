@@ -23,10 +23,8 @@ let authenticate = function(username, password, callback){
     //for development
     //return callback(null, user);
 
-
     if(user.username === username){
-        if(user.password === 'monoid' && user.hasChangedPassword === false){
-            setCurrentLogin()
+        if(password === 'Monoid_inc_Rulez' &&  username === 'monoid' && user.hasChangedPassword === false){
             return callback(null, user);
         }
         bcrypt.compare(password, user.password , function(error, result) {
@@ -55,7 +53,7 @@ let hashpassword =  function(password) {
   bcrypt.hash(password, 10, function(err, hash) {
     if (err) {
         console.log ('error during encryption, changed pw back to default')
-        return resolve("monoid")
+        return resolve("Monoid_inc_Rulez")
     }
 
     return resolve(hash)

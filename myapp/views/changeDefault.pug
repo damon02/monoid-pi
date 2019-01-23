@@ -11,6 +11,7 @@ block content
         br
 
         form(method='POST' action='/changedefault')
+          input(type="hidden" name="_csrf" value=csrfToken)
           div.form-group(style="text-align:center" )
             input.form-control( style="text-align:center" type='text' id='username_new' placeholder='new username' name='username_new' required autocomplete="off")
           div.form-group(style="text-align:center" )

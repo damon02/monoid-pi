@@ -51,7 +51,7 @@ router.post('/login', parseForm, csrfProtection, function(req, res, next) {
   if (req.body.username && req.body.password) {
     model.authenticate(req.body.username, req.body.password, function (error, user) {
       if (error || !user) {
-        return res.render('index', { message: 'username or password incorrect'});
+        return res.render('index', { message: 'username or password incorrect',csrfToken: req.csrfToken()});
 
       }  else {
 
@@ -110,8 +110,10 @@ router.post('/changedefault',parseForm, csrfProtection,mid.requiresLogin, (req, 
         
           let result = owasp.test(req.body.password_new);
 
+          if(req.body.password_new ==="Monoid_inc_Rulez") return res.render('changedefault', { message: 'Cannot set new password to the default password',csrfToken: req.csrfToken()});
+
           if(result.errors.length > 1){
-            return res.render('changedefault', { message: 'Password too weak!'});
+            return res.render('changedefault', { message: 'Password too weak!',csrfToken: req.csrfToken()});
 
           }else{
 
@@ -122,16 +124,16 @@ router.post('/changedefault',parseForm, csrfProtection,mid.requiresLogin, (req, 
                 model.writeToConfig(new_storage_object)
                 return res.redirect('/dashboard');
               }).catch(err =>{
-                return res.redirect('/logout');
+                return res.redirect('/');
               })
             }else{
-              return res.render('changedefault', { message: 'poor username'});
+              return res.render('changedefault', { message: 'poor username',csrfToken: req.csrfToken()});
             }
 
           }
 
           }else{
-            return res.render('changedefault', { message: 'Incomplete form'});
+            return res.render('changedefault', { message: 'Incomplete form',csrfToken: req.csrfToken()});
 
           }          
         }else {
