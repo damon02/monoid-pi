@@ -66,7 +66,7 @@ let getUserObject = function(){
     return JSON.parse(fs.readFileSync('../myapp/storage/config.json', 'utf8')).user;
 }
 
-let updateUser = function(items_to_update){
+let updateUser = function(items_to_update,hash = null){
     return new Promise(function (resolve, reject) {
 
     var storage = JSON.parse(fs.readFileSync('../myapp/storage/config.json', 'utf8'));
@@ -75,12 +75,13 @@ let updateUser = function(items_to_update){
     //SANITIZE INPUT!
 
     storage.user.hasChangedPassword = true
+    if(hash !== null){
+        storage.user.password = hash
+
+    }
 
     for (let key in items_to_update){
         if(key == "password"){
-            hash = hashpassword(items_to_update.password).then(function(hash){
-                storage.user[key] = hash        
-            })
         }else{
             if(InputValidator.customOr(items_to_update[key], custom_rules)){
                 storage.user[key] = items_to_update[key]
@@ -131,5 +132,7 @@ module.exports = {
     getUserObject,
     writeToConfig,
     hasChangedPassword,
-    setLastLogin
+    setLastLogin,
+    setCurrentLogin,
+    hashpassword
 }

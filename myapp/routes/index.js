@@ -17,7 +17,7 @@ var parseForm = bodyParser.urlencoded({ extended: false })
 
 /* GET landing page. */
 router.get('/',csrfProtection, function(req, res, next) {
-    res.render('index', {password:"Mono1d_INC!", username: 'monoid', csrfToken: req.csrfToken() });
+    res.render('index', {csrfToken: req.csrfToken() });
 }); 
 
 
@@ -39,9 +39,8 @@ router.get('/dashboard',csrfProtection, mid.requiresLogin, function(req, res, ne
     })
 
   }else{
-    var err = new Error('Page not found');
-    err.status = 404;
-    return next("error");
+    res.status(404);
+    res.render('404');
   }
 });
 
@@ -55,20 +54,22 @@ router.post('/login', parseForm, csrfProtection, function(req, res, next) {
 
       }  else {
 
-        req.session.user = user;
-        req.session.socketToken = uuidv4();
+        if(user.hasChangedPassword){
 
-        if(user.hasChangedPassword === false){
-          return res.redirect('/changedefault');
-
+          req.session.user = user;
+          req.session.socketToken = uuidv4();
+          return res.redirect('/dashboard');
         }
-        return res.redirect('/dashboard');
+        req.session.user = user;
+        return res.redirect('/changedefault');
+
+
       }
     });
-  } else {
-    var err = new Error('Username and password are required.');
-    err.status = 404;
-    return next(err);
+  } 
+  else {
+    res.status(404);
+    return res.render('404');
   }
 });
 
@@ -84,48 +85,63 @@ router.get('/logout', (req, res) => {
   }
 });
 
-router.get('/changedefault', csrfProtection,mid.requiresLogin, function(req, res, next) {
+router.get('/changedefault',csrfProtection, function(req, res, next) {
+
   if (req.session.user && req.cookies.user_sid) {
-      if(!model.hasChangedPassword()){
-        return res.render('changedefault', { title: 'passwords cannot be restored when lost!', csrfToken: req.csrfToken()});
-      }else{
-        res.redirect('/dashboard')
-      }
+      if(req.session.user.hasChangedPassword){
+        return res.redirect('/dashboard')
+    }else{
+      return res.render('changedefault', {csrfToken: req.csrfToken()});
+    }
   }else{
-    var err = new Error('Page not found');
-    err.status = 404; 
-    return next("error");
+    res.status(404);
+    return res.render('index');
   }
 });
 
 
-router.post('/changedefault',parseForm, csrfProtection,mid.requiresLogin, (req, res,next) => {
+router.post('/changedefault',parseForm, csrfProtection, (req, res,next) => {
 
   if (req.session.user && req.cookies.user_sid) {
+    if(req.session.user.hasChangedPassword) {
+      return res.render('/dashboard')
+    }
 
     if (req.body.username_new && req.body.password_new  && req.body.password_new_verify) {
           if(req.body.password_new != req.body.password_new_verify){
-            return res.render('changedefault', { message: 'New password does not match!'});
+            return res.render('changedefault', { message: 'New password does not match!',csrfToken: req.csrfToken()});
           }
         
           let result = owasp.test(req.body.password_new);
 
-          if(req.body.password_new ==="Monoid_inc_Rulez") return res.render('changedefault', { message: 'Cannot set new password to the default password',csrfToken: req.csrfToken()});
+          if(req.body.password_new ==="Monoid_inc_Rulez"){
+            return res.render('changedefault', { message: 'Cannot set new password to the default password',csrfToken: req.csrfToken()});
+          }
 
           if(result.errors.length > 1){
-            return res.render('changedefault', { message: 'Password too weak!',csrfToken: req.csrfToken()});
+            return res.render('changedefault', { message: 'Password not allowed!',csrfToken: req.csrfToken()});
 
           }else{
 
             if(req.body.username_new.length > 0 && req.body.username_new.length  < 30){
               let itemsToUpdate = {"username": req.body.username_new, "password": req.body.password_new}
 
-              return model.updateUser(itemsToUpdate).then(function(new_storage_object){
-                model.writeToConfig(new_storage_object)
-                return res.redirect('/dashboard');
-              }).catch(err =>{
-                return res.redirect('/');
+              model.hashpassword(req.body.password_new).then(hash =>{
+                model.updateUser(itemsToUpdate,hash).then(function(new_storage_object){
+  
+                  model.writeToConfig(new_storage_object)
+
+                  model.setCurrentLogin()
+  
+                  return res.redirect('/dashboard');
+                }).catch(err =>{
+                  return res.render('changedefault', { message: 'Something went wrong',csrfToken: req.csrfToken()});
+                })
               })
+              
+
+
+
             }else{
               return res.render('changedefault', { message: 'poor username',csrfToken: req.csrfToken()});
             }
@@ -152,7 +168,7 @@ router.post('/updateApiToken', parseForm, csrfProtection,mid.requiresLogin, (req
       return res.redirect('/dashboard');
     }).catch(err =>{
       res.clearCookie('user_sid');
-      return res.render('index', {password:"Mono1d_INC!", username: 'monoid', message:'Congrats script kiddo,  you are now officially comprimised!' });
+      return res.render('index', {message:'Congrats, you are now officially comprimised!' });
     })
   }else{
     return res.render('dashboard', { message: 'Bad Token'});
@@ -174,7 +190,7 @@ router.post('/updateUsername', parseForm, csrfProtection,mid.requiresLogin, (req
       return res.redirect('/dashboard');
     }).catch(err =>{
       res.clearCookie('user_sid');
-      return res.render('index', {password:"Mono1d_INC!", username: 'monoid', message:'Congrats script kiddo, you are now officially comprimised!' });
+      return res.render('index', {message:'Congrats, you are now officially comprimised!' });
     })
   }else{
     return res.render('/dashboard', { message: 'poor username'});
@@ -201,12 +217,19 @@ router.post('/updatePassword', parseForm, csrfProtection, mid.requiresLogin, (re
       return res.render('changedefault', { message: 'Password too weak!'});
     }else{
       let itemsToUpdate = {"password": req.body.password_new}
-    return model.updateUser(itemsToUpdate).then(function(new_storage_object){
 
-      model.writeToConfig(new_storage_object)
-      return res.redirect('/dashboard');
-    })
+      model.hashpassword(req.body.password_new).then(hash =>{
+        model.updateUser(itemsToUpdate,hash).then(function(new_storage_object){
 
+          model.writeToConfig(new_storage_object)
+
+          model.setCurrentLogin()
+
+          return res.redirect('/dashboard');
+        }).catch(err =>{
+          return res.render('changedefault', { message: 'Something went wrong',csrfToken: req.csrfToken()});
+        })
+      })
   }
   }else {
     err.status = 404;

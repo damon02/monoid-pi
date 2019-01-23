@@ -1,3 +1,5 @@
+const model = require('../models/user');
+
 function loggedOut(req, res, next) {
     if (req.session.user && req.cookies.user_sid) {
         res.clearCookie('user_sid');
@@ -6,7 +8,8 @@ function loggedOut(req, res, next) {
     return next();
   }
   function requiresLogin(req, res, next) {
-    if (req.session.user && req.cookies.user_sid) {
+    if (req.session.user && req.cookies.user_sid && model.hasChangedPassword()) {
+
         return next();
     } else {
       res.status(404);

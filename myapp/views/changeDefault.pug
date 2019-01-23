@@ -5,10 +5,12 @@ block content
     .row
       .col-4
       <div class="col-md-4 col-md-offset-4" style="text-align:center">
-        h1= 'Monoid'
+        h1= 'Monoid NIDS'
+        span='Network monitoring made simple'
+        img(width='150px' height='150px' src='images/mstile-150x150.png')
+
         p='Change default credentials'
-        br
-        br
+
 
         form(method='POST' action='/changedefault')
           input(type="hidden" name="_csrf" value=csrfToken)
@@ -16,15 +18,15 @@ block content
             input.form-control( style="text-align:center" type='text' id='username_new' placeholder='new username' name='username_new' required autocomplete="off")
           div.form-group(style="text-align:center" )
             input.form-control(style="text-align:center"  type='password' id='password_new' placeholder='new password' name='password_new' required autocomplete="off")
-            small(class="form-text text-muted") The password must be at least 10 characters long.
-            small(class="form-text text-muted") The password must contain at least one uppercase letter.
-            small(class="form-text text-muted") The password must contain at least one number.
-            small(class="form-text text-muted") The password must contain at least one special character.
-
+            small(class="form-text" style="color:#FFFFFF") The password must be at least 10 characters long.
+            small(class="form-text" style="color:#FFFFFF")  The password must contain at least one uppercase letter.
+            small(class="form-text" style="color:#FFFFFF")  The password must contain at least one number.
+            small(class="form-text" style="color:#FFFFFF")  The password must contain at least one special character.
+          small(style='color:#E74C3C')
+            strong='credentials cannot be restored when lost!'
           div.form-group
             input.form-control(type='password' style="text-align:center" id='password_new_verify' placeholder='verify new password' name='password_new_verify' required autocomplete="off")
           button.btn.btn-primary(type='submit') Submit
-        br
         br
         if message && message.length
         strong #{message}
