@@ -212,6 +212,4 @@ router.post('/updatePassword', parseForm, csrfProtection, mid.requiresLogin, (re
 }
 }) 
 
-
-
 module.exports = router;
