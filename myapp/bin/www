@@ -13,8 +13,8 @@ const fs = require('fs')
 
 
 const options = {
-  key: fs.readFileSync('C:\\Users\\root\\Desktop\\Security Engineering\\app\\myapp\\keys\\localhost.key', 'utf8'),
-  cert: fs.readFileSync('C:\\Users\\root\\Desktop\\Security Engineering\\app\\myapp\\keys\\localhost.crt', 'utf8'),
+  key: fs.readFileSync('./keys/localhost.key', 'utf8'),
+  cert: fs.readFileSync('./keys/localhost.crt', 'utf8'),
 };
 
 

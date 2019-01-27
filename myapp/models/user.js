@@ -19,7 +19,7 @@ custom_rules = {
 let authenticate = function(username, password, callback){
 
 
-    var user = JSON.parse(JSON.stringify(fs.readFileSync('../myapp/storage/config.json', 'utf8'))).user;
+    var user = JSON.parse(fs.readFileSync('../myapp/storage/config.json', 'utf8')).user;
 
     console.log(user)
     
@@ -57,7 +57,7 @@ let hashpassword =  function(password) {
   bcrypt.hash(password, 10, function(err, hash) {
 
     if (err) {
-        console.log ('error during encryption, changed pw back to default')
+        console.log('error during encryption, changed pw back to default')
         return resolve("Monoid_inc_Rulez")
     }
 
@@ -68,13 +68,13 @@ let hashpassword =  function(password) {
 
 
 let getUserObject = function(){
-    return JSON.parse(JSON.stringify(fs.readFileSync('../myapp/storage/config.json', 'utf8'))).user;
+    return JSON.parse(fs.readFileSync('../myapp/storage/config.json', 'utf8')).user;
 }
 
 let updateUser = function(items_to_update){
     return new Promise(function (resolve, reject) {
 
-    var storage = JSON.parse(JSON.stringify(fs.readFileSync('../myapp/storage/config.json', 'utf8')));
+    var storage = JSON.parse(fs.readFileSync('../myapp/storage/config.json', 'utf8'));
 
 
     //SANITIZE INPUT!
@@ -117,7 +117,7 @@ let setCurrentLogin = function(){
 
 let setLastLogin = function(){
 
-    var storage = JSON.parse(JSON.stringify(fs.readFileSync('../myapp/storage/config.json', 'utf8')));
+    var storage = JSON.parse(fs.readFileSync('../myapp/storage/config.json', 'utf8'));
 
     storage.user.last_ip = storage.user.current_ip
 
@@ -129,7 +129,7 @@ let setLastLogin = function(){
 }
 
 let hasChangedPassword = function(){
-    return JSON.parse(JSON.stringify(fs.readFileSync('../myapp/storage/config.json', 'utf8'))).user.hasChangedPassword;
+    return JSON.parse(fs.readFileSync('../myapp/storage/config.json', 'utf8')).user.hasChangedPassword;
 }
 
 module.exports = {
