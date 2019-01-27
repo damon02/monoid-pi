@@ -15,7 +15,7 @@ let startTap = function(){
 
         shelljs.exec("bash /home/monoid_dev/raspberry-pi/tap/check.sh")
 
-        var obj = JSON.parse(fs.readFileSync('/home/monoid_dev/raspberry-pi/tap/status.json', 'utf8'));
+        var obj = JSON.parse(JSON.stringify(fs.readFileSync('/home/monoid_dev/raspberry-pi/tap/status.json', 'utf8')));
 
         for(let key in obj){
             if(obj[key] == "down"){
@@ -101,7 +101,7 @@ let testConnection = function(){
 
     return new Promise(function (resolve, reject) {
 
-    let token = JSON.parse(fs.readFileSync('../myapp/storage/config.json', 'utf8')).user.api_token;
+    let token = JSON.parse(JSON.stringify(fs.readFileSync('../myapp/storage/config.json', 'utf8'))).user.api_token;
     rp({
         url: "https://api.monoidinc.nl/data/test-connection",
         method: "GET",

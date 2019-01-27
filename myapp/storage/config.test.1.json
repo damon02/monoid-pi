@@ -2,10 +2,12 @@
   "user": {
     "id": "4176a5fb-b889-43ee-bf36-4f455fbb4193",
     "username": "monoid",
-    "password": "Monoid_inc_Rulez",
+    "password": "$2a$10$COEdleSY.5ZGPTtJlQJQ7.zeL5/hQbB8BKxzUUJJyvpRVK5n7h4eW",
     "api_token": "ca28c261-e9e5-4fbb-8f28-5cf8e3fc334e",
-    "current_logged_in": "",
-    "hasChangedPassword": false,
+    "current_logged_in": "2019-01-27 11:14:58",
+    "current_ip": "192.168.159.1",
+    "last_ip": "",
+    "hasChangedPassword": true,
     "last_logged_in": ""
   }
 }

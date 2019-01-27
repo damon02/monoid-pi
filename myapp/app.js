@@ -62,7 +62,7 @@ var limiter = new rateLimit({
   delayAfter: 0, //begin slowing down responses after the first request
   delayMs: 0, //slow down subsequent responses by 3 seconds per request
   max: 200, //start blocking after 200 requests
-  message:"Congrats! you are rate-limited!",
+  message:"You are rate-limited!",
 headers:true//show header stats with attemts remaining
 });
 

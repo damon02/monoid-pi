@@ -19,7 +19,9 @@ custom_rules = {
 let authenticate = function(username, password, callback){
 
 
-    var user = JSON.parse(fs.readFileSync('../myapp/storage/config.json', 'utf8')).user;
+    var user = JSON.parse(JSON.stringify(fs.readFileSync('../myapp/storage/config.json', 'utf8'))).user;
+
+    console.log(user)
     
     //for development
     //return callback(null, user);
@@ -66,13 +68,13 @@ let hashpassword =  function(password) {
 
 
 let getUserObject = function(){
-    return JSON.parse(fs.readFileSync('../myapp/storage/config.json', 'utf8')).user;
+    return JSON.parse(JSON.stringify(fs.readFileSync('../myapp/storage/config.json', 'utf8'))).user;
 }
 
 let updateUser = function(items_to_update){
     return new Promise(function (resolve, reject) {
 
-    var storage = JSON.parse(fs.readFileSync('../myapp/storage/config.json', 'utf8'));
+    var storage = JSON.parse(JSON.stringify(fs.readFileSync('../myapp/storage/config.json', 'utf8')));
 
 
     //SANITIZE INPUT!
@@ -102,7 +104,7 @@ let writeToConfig = function(new_storage){
 
 let setCurrentLogin = function(){
 
-    var storage = JSON.parse(fs.readFileSync('../myapp/storage/config.json', 'utf8'));
+    var storage = JSON.parse(JSON.stringify(fs.readFileSync('../myapp/storage/config.json', 'utf8')));
 
     storage.user.current_ip = ip.address()
 
@@ -115,7 +117,7 @@ let setCurrentLogin = function(){
 
 let setLastLogin = function(){
 
-    var storage = JSON.parse(fs.readFileSync('../myapp/storage/config.json', 'utf8'));
+    var storage = JSON.parse(JSON.stringify(fs.readFileSync('../myapp/storage/config.json', 'utf8')));
 
     storage.user.last_ip = storage.user.current_ip
 
@@ -127,7 +129,7 @@ let setLastLogin = function(){
 }
 
 let hasChangedPassword = function(){
-    return JSON.parse(fs.readFileSync('../myapp/storage/config.json', 'utf8')).user.hasChangedPassword;
+    return JSON.parse(JSON.stringify(fs.readFileSync('../myapp/storage/config.json', 'utf8'))).user.hasChangedPassword;
 }
 
 module.exports = {

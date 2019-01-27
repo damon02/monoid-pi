@@ -26,16 +26,27 @@ let getSystemData = function(){
         //niet pi
         return resolve({
             "datetime": new Date().toISOString().replace(/T/, ' ').replace(/\..+/, ''),
-            'ram_usage': 'N/A',
-            'file_usage': 'N/A',
-            'cpu_usage': 'N/A',
-            'cpu_temp': 'N/A',
-            'nic': {'mon_nic':{'status': 'not detected'}, 'br_nic':{'status': 'not detected'}}
+            'ram_usage': getRandomInt(1,10),
+            'file_usage': "5",
+            'cpu_usage': getRandomInt(20,50),
+            'cpu_temp': getRandomInt(51,55),
+            'nic': {'mon_nic':{'status': 'up'}, 'br_nic':{'status': 'up'}}
         })
     }
 })
 
 }
+
+function getRandomInt(min, max) {
+
+    if(Math.floor(Math.random() % 2 == 0)){
+
+    }
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return (Math.floor(Math.random() * (max - min + 1)) + min).toString();
+}
+
 
 
 module.exports = {
