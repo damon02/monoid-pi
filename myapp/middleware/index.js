@@ -8,7 +8,7 @@ function loggedOut(req, res, next) {
     return next();
   }
   function requiresLogin(req, res, next) {
-    if (req.session.user && req.cookies.user_sid && model.hasChangedPassword()) {
+    if (req.session.user && req.cookies.user_sid){
 
         return next();
     } else {

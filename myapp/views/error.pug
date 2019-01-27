@@ -1,6 +1,14 @@
+//- extends layout
+
+//- block content
+//-   h1= message
+//-   h2= error.status
+//-   pre #{error.stack}
+
+
 extends layout
 
 block content
-  h1= message
-  h2= error.status
-  pre #{error.stack}
+ div(style='position:absolute; top: 40%; left: 43%; margin-top: -50px; margin-left: -50px; width: 300px; height: 100px;')
+  h1(class='display-1' style='text-align:center') ERROR
+  p(style='text-align:center')  #{msg} Something went wrong

@@ -2,43 +2,38 @@ extends layout
 
 
 block content
-  <video autoplay muted loop id="myVideo">
-    <source src="vid/lines1080.mp4" type="video/mp4">
-  </video> 
   container
     nav(class='navbar fixed-top')
-      span(class='navbar-brand mb-0 h1')
+      .col.col.text-left
         <button class='btn btn-outline-dark' onClick='stopBackground()'>stop background</button>
-      //span(class='navbar-text navbar-center') <strong style='color:white'>This application is still a prototype, please treat it as such</strong>
-      //span(class="navbar-text navbar-right") signed in as #{username}
-      span last login: #{last_logged_in} 
-      span current ip: #{ip_adr}
-      form(method='GET'  action='/logout')
-        <button class='btn btn-primary' type='submit'>logout</button>
-      
-  br
-  container
+      .col.meme.col-2
+        div(style="text-align: center;")
+          span(style="color:#f1c232") Last login
+          div(style="text-align: center;  outline: 2px solid #f1c232;")
+            div #{last_logged_in}
+            div #{last_ip}
+      .col.meme.col-2
+        div(style="text-align: center;")
+          span(style="color:#f1c232") Current login
+          div(style="text-align: center;  outline: 2px solid #f1c232;")
+            div #{current_logged_in}
+            div #{current_ip}
+
+      .col.col.text-right
+        form(method='GET'  action='/logout')
+          <button class='btn btn-primary' type='submit'>logout</button>
+    br
+    br
     .row
       .col-4
         h2 User
-        h4 Username
-        form(method='POST' action='/updateUsername')
-          input(type="hidden" name="_csrf" value=csrfToken)
-          <div class="input-group mb-3">
-            input.form-control(type='text' id='username' placeholder='username' value=username name='username' required autocomplete="off")
-            //- <input type="text" class="form-control" placeholder="Recipient's username" aria-label="Recipient's username" aria-describedby="basic-addon2">
-            <div class="input-group-append">
-              button.btn.btn-primary(type='submit') update
-            </div>
-          </div>
-        br
+
         h4 API token
         form(method='POST' action='/updateApiToken')
           input(type="hidden" name="_csrf" value=csrfToken)
 
           <div class="input-group mb-3">
             input.form-control(type='text' id='apiToken' placeholder='API token' value=token name='apiToken' required autocomplete="off")        
-            //- <input type="text" class="form-control" placeholder="Recipient's username" aria-label="Recipient's username" aria-describedby="basic-addon2">
             <div class="input-group-append">
               button.btn.btn-primary(type='submit') update
             </div>
@@ -60,6 +55,9 @@ block content
             input.form-control(type='password' id='password_new_verify' placeholder='Verify new password' name='password_new_verify' required autocomplete="off")
 
           button.btn.btn-primary(type='submit') Submit
+        br
+        if message && message.length
+        strong #{message}
 
       .col.meme.col-4
         h2 System
@@ -116,7 +114,7 @@ block content
           div(id='connection_status')
             button.btn.btn-lg.btn-block.btn-outline-dark(disabled=true style="cursor:default") not tested
 
-          <small id='connection_status_msg'class="form-text text-muted")></small>
+          <small id='connection_status_msg'class="form-text")></small>
         br
         br
         .row-justify-content-center
@@ -129,7 +127,7 @@ block content
               button.btn.btn-lg.btn-block.btn-outline-dark( style="cursor:default;background:#222")
  
             
-            <small id='current_tap_status_msg'class="form-text text-muted"></small> 
+            <small id='current_tap_status_msg'class="form-text"></small> 
         br
 
 

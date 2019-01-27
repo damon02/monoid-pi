@@ -1,6 +1,7 @@
 var bcrypt = require('bcryptjs');
 var fs = require('fs');
 var InputValidator = require('input-validate');
+const ip = require("ip");
 
 
 
@@ -24,9 +25,10 @@ let authenticate = function(username, password, callback){
     //return callback(null, user);
 
     if(user.username === username){
-        if(password === 'Monoid_inc_Rulez' &&  username === 'monoid' && user.hasChangedPassword === false){
+        if(password === 'Monoid_inc_Rulez' && username === 'monoid' && user.hasChangedPassword === false){
             return callback(null, user);
         }
+
         bcrypt.compare(password, user.password , function(error, result) {
             if (result === true) {
                 setCurrentLogin()
@@ -51,6 +53,7 @@ let hashpassword =  function(password) {
     return new Promise(function (resolve, reject) {
 
   bcrypt.hash(password, 10, function(err, hash) {
+
     if (err) {
         console.log ('error during encryption, changed pw back to default')
         return resolve("Monoid_inc_Rulez")
@@ -66,7 +69,7 @@ let getUserObject = function(){
     return JSON.parse(fs.readFileSync('../myapp/storage/config.json', 'utf8')).user;
 }
 
-let updateUser = function(items_to_update,hash = null){
+let updateUser = function(items_to_update){
     return new Promise(function (resolve, reject) {
 
     var storage = JSON.parse(fs.readFileSync('../myapp/storage/config.json', 'utf8'));
@@ -75,13 +78,10 @@ let updateUser = function(items_to_update,hash = null){
     //SANITIZE INPUT!
 
     storage.user.hasChangedPassword = true
-    if(hash !== null){
-        storage.user.password = hash
-
-    }
 
     for (let key in items_to_update){
         if(key == "password"){
+            storage.user[key] = items_to_update[key]
         }else{
             if(InputValidator.customOr(items_to_update[key], custom_rules)){
                 storage.user[key] = items_to_update[key]
@@ -104,15 +104,20 @@ let setCurrentLogin = function(){
 
     var storage = JSON.parse(fs.readFileSync('../myapp/storage/config.json', 'utf8'));
 
+    storage.user.current_ip = ip.address()
+
     storage.user.current_logged_in = new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '');
 
     fs.writeFileSync('../myapp/storage/config.json',JSON.stringify(storage,null,2),'utf8')
 
 }
 
+
 let setLastLogin = function(){
 
     var storage = JSON.parse(fs.readFileSync('../myapp/storage/config.json', 'utf8'));
+
+    storage.user.last_ip = storage.user.current_ip
 
     storage.user.last_logged_in = storage.user.current_logged_in
 
@@ -123,7 +128,6 @@ let setLastLogin = function(){
 
 let hasChangedPassword = function(){
     return JSON.parse(fs.readFileSync('../myapp/storage/config.json', 'utf8')).user.hasChangedPassword;
-
 }
 
 module.exports = {
@@ -134,5 +138,4 @@ module.exports = {
     hasChangedPassword,
     setLastLogin,
     setCurrentLogin,
-    hashpassword
-}
+    hashpassword}

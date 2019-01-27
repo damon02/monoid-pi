@@ -2,10 +2,12 @@
   "user": {
     "id": "4176a5fb-b889-43ee-bf36-4f455fbb4193",
     "username": "monoid",
-    "password": "$2a$10$e4G5klLlyXq87n5CQeYCquaXN7ZuA6CvzqDwl6YVN9pVF0kXR6LN6",
+    "password": "$2a$10$i7tG4A1oefCAdxU5BlsIretoviM.teoltv4UNQ375rhwacTEwEGtm",
     "api_token": "ca28c261-e9e5-4fbb-8f28-5cf8e3fc334e",
-    "current_logged_in": "2019-01-23 22:25:26",
+    "current_logged_in": "2019-01-26 23:53:45",
+    "current_ip": "10.16.10.6",
+    "last_ip": "10.16.10.6",
     "hasChangedPassword": true,
-    "last_logged_in": "2019-01-23 22:25:13"
+    "last_logged_in": "2019-01-26 23:25:09"
   }
 }

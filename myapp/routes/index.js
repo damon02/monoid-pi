@@ -5,10 +5,10 @@ const model = require('../models/user');
 const owasp = require('owasp-password-strength-test');
 const systemData = require('../modules/systemData')
 const Tap = require('../modules/Tap')
-const ip = require("ip");
 let csrf = require('csurf');
 var bodyParser = require('body-parser')
 const uuidv4 = require('uuid/v4');
+var bcrypt = require('bcryptjs');
 
 // setup route middlewares
 var csrfProtection = csrf({ cookie: true })
@@ -26,17 +26,30 @@ router.get('/dashboard',csrfProtection, mid.requiresLogin, function(req, res, ne
 
   let User = model.getUserObject()
 
+
   if (req.session.user && req.cookies.user_sid) {
 
-      return res.render('dashboard', 
-      {title: 'Dashboard', 
-      username: User.username, 
-      token: User.api_token, 
-      ip_adr: ip.address(),
-      last_logged_in: User.last_logged_in,
-      csrfToken: req.csrfToken(),
-      socketToken: req.session.socketToken
-    })
+    let msg = ""
+
+    if(req.session.msg){
+
+      msg = req.session.msg
+
+    }
+    delete req.session.msg
+
+
+    res.render('dashboard', 
+    {title: 'Dashboard',
+    message: msg, 
+    token: User.api_token, 
+    current_ip: User.current_ip,
+    last_ip: User.last_ip,
+    current_logged_in: User.current_logged_in,
+    last_logged_in: User.last_logged_in,
+    csrfToken: req.csrfToken(),
+    socketToken: req.session.socketToken
+  })
 
   }else{
     res.status(404);
@@ -50,8 +63,7 @@ router.post('/login', parseForm, csrfProtection, function(req, res, next) {
   if (req.body.username && req.body.password) {
     model.authenticate(req.body.username, req.body.password, function (error, user) {
       if (error || !user) {
-        return res.render('index', { message: 'username or password incorrect',csrfToken: req.csrfToken()});
-
+        return res.render('index', { message: 'Invalid Credentials',csrfToken: req.csrfToken()});
       }  else {
 
         if(user.hasChangedPassword){
@@ -62,7 +74,6 @@ router.post('/login', parseForm, csrfProtection, function(req, res, next) {
         }
         req.session.user = user;
         return res.redirect('/changedefault');
-
 
       }
     });
@@ -88,7 +99,7 @@ router.get('/logout', (req, res) => {
 router.get('/changedefault',csrfProtection, function(req, res, next) {
 
   if (req.session.user && req.cookies.user_sid) {
-      if(req.session.user.hasChangedPassword){
+      if(model.hasChangedPassword()){
         return res.redirect('/dashboard')
     }else{
       return res.render('changedefault', {csrfToken: req.csrfToken()});
@@ -104,17 +115,18 @@ router.post('/changedefault',parseForm, csrfProtection, (req, res,next) => {
 
   if (req.session.user && req.cookies.user_sid) {
     if(req.session.user.hasChangedPassword) {
-      return res.render('/dashboard')
+      return res.redirect('/dashboard');
     }
 
     if (req.body.username_new && req.body.password_new  && req.body.password_new_verify) {
           if(req.body.password_new != req.body.password_new_verify){
+            
             return res.render('changedefault', { message: 'New password does not match!',csrfToken: req.csrfToken()});
           }
         
           let result = owasp.test(req.body.password_new);
 
-          if(req.body.password_new ==="Monoid_inc_Rulez"){
+          if(req.body.password_new === "Monoid_inc_Rulez"){
             return res.render('changedefault', { message: 'Cannot set new password to the default password',csrfToken: req.csrfToken()});
           }
 
@@ -124,26 +136,43 @@ router.post('/changedefault',parseForm, csrfProtection, (req, res,next) => {
           }else{
 
             if(req.body.username_new.length > 0 && req.body.username_new.length  < 30){
-              let itemsToUpdate = {"username": req.body.username_new, "password": req.body.password_new}
 
               model.hashpassword(req.body.password_new).then(hash =>{
-                model.updateUser(itemsToUpdate,hash).then(function(new_storage_object){
-  
-                  model.writeToConfig(new_storage_object)
 
-                  model.setCurrentLogin()
+                bcrypt.compare(req.body.password_new, hash, function(error, result) {
+                  if(result){
+
+                    model.updateUser({"username": req.body.username_new, "password": hash}).then(function(new_storage_object){
   
-                  return res.redirect('/dashboard');
-                }).catch(err =>{
-                  return res.render('changedefault', { message: 'Something went wrong',csrfToken: req.csrfToken()});
+                      model.writeToConfig(new_storage_object)
+    
+                      model.setCurrentLogin()
+      
+                      return res.redirect('/dashboard');
+                    }).catch(err =>{
+                      return res.render('changedefault', { message: 'Something went wrong',csrfToken: req.csrfToken()});
+
+                    })
+
+                  }else{
+                    return res.render('changedefault', { message: 'Something went wrong',csrfToken: req.csrfToken()});
+
+                  }
+
+                 
+
+
                 })
+
+
+ 
               })
               
 
 
 
             }else{
-              return res.render('changedefault', { message: 'poor username',csrfToken: req.csrfToken()});
+              return res.render('changedefault', { message: 'Invalid Username',csrfToken: req.csrfToken()});
             }
 
           }
@@ -168,10 +197,10 @@ router.post('/updateApiToken', parseForm, csrfProtection,mid.requiresLogin, (req
       return res.redirect('/dashboard');
     }).catch(err =>{
       res.clearCookie('user_sid');
-      return res.render('index', {message:'Congrats, you are now officially comprimised!' });
+      return res.render('index', {message:'Possible malicious behavior detected' });
     })
   }else{
-    return res.render('dashboard', { message: 'Bad Token'});
+    return res.redirect('/dashboard');
   }
   }else {
     err.status = 404;
@@ -181,60 +210,84 @@ router.post('/updateApiToken', parseForm, csrfProtection,mid.requiresLogin, (req
 })
 
 
-router.post('/updateUsername', parseForm, csrfProtection,mid.requiresLogin, (req, res,next) => {
-  if (req.session.user && req.cookies.user_sid) {
-    if(req.body.username.length > 3 && req.body.username.length  < 30){
-      let itemsToUpdate = {"username": req.body.username}
-    return model.updateUser(itemsToUpdate).then(function(new_storage_object){
-      model.writeToConfig(new_storage_object)
-      return res.redirect('/dashboard');
-    }).catch(err =>{
-      res.clearCookie('user_sid');
-      return res.render('index', {message:'Congrats, you are now officially comprimised!' });
-    })
-  }else{
-    return res.render('/dashboard', { message: 'poor username'});
-  }
-  }else {
-    err.status = 404;
-    return next(err);
-}
-  
-}) 
 
 
 router.post('/updatePassword', parseForm, csrfProtection, mid.requiresLogin, (req, res,next) => {
 
   if (req.session.user && req.cookies.user_sid) {
 
-    if(req.body.password_new != req.body.password_new_verify){
-      return res.render('changedefault', { message: 'New password does not match!'});
-    }
-  
-    let result = owasp.test(req.body.password_new);
-  
-    if(result.errors.length > 1){
-      return res.render('changedefault', { message: 'Password too weak!'});
-    }else{
-      let itemsToUpdate = {"password": req.body.password_new}
+    if (req.body.password && req.body.password_new && req.body.password_new_verify) {
 
-      model.hashpassword(req.body.password_new).then(hash =>{
-        model.updateUser(itemsToUpdate,hash).then(function(new_storage_object){
+      model.authenticate(req.session.user.username, req.body.password, function (error, user) {
 
-          model.writeToConfig(new_storage_object)
 
-          model.setCurrentLogin()
+        if (error || !user) {
+
+          req.session.msg = "Invalid Credentials"
 
           return res.redirect('/dashboard');
-        }).catch(err =>{
-          return res.render('changedefault', { message: 'Something went wrong',csrfToken: req.csrfToken()});
+
+        }
+
+        if(req.body.password_new != req.body.password_new_verify){
+
+          req.session.msg = "New password does not match!"
+
+          return res.redirect('/dashboard');
+        
+        }
+
+        let result = owasp.test(req.body.password_new);
+
+        if(result.errors.length > 1){
+
+          req.session.msg = "Password not allowed!"
+          return res.redirect('/dashboard');
+
+      }else{
+
+        model.hashpassword(req.body.password_new).then(hash =>{
+
+          bcrypt.compare(req.body.password_new, hash, function(error, result) {
+
+            
+          model.updateUser({"password": hash}).then(function(new_storage_object){
+  
+            model.writeToConfig(new_storage_object)
+
+            req.session.msg = "Password changed succesfully"
+            return res.redirect('/dashboard');
+
+    
+          }).catch(err =>{
+
+            req.session.msg = "Something went wrong"
+            return res.redirect('/dashboard');
+
+          })
+  
+    
+          })
+
         })
+        
+      }
+      
       })
+
+    }else {
+      err.status = 404;
+      return next(err);
+    }
   }
-  }else {
-    err.status = 404;
-    return next(err);
-}
-}) 
+})
+    
+
+  
+
+
+  
+  
+
 
 module.exports = router;
